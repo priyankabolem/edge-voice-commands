@@ -24,7 +24,7 @@ test:
 	$(PY) -m pytest -q
 
 lint:
-	uvx ruff check . && uvx ruff format --check .
+	.venv/bin/ruff check . && .venv/bin/ruff format --check .
 	find cpp -path cpp/build -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format --dry-run --Werror
 
 .PHONY: stage2 train evaluate
@@ -70,7 +70,7 @@ parity-cpp:
 	$(PY) -m kws.parity_cpp
 
 format:
-	uvx ruff format .
+	.venv/bin/ruff format .
 	find cpp -path cpp/build -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format -i
 
 .PHONY: stage6 benchmark profile-ops
@@ -94,3 +94,10 @@ streams:
 
 evaluate-stream:
 	$(PY) -m kws.evaluate_stream
+
+.PHONY: all readme
+
+all: stage0 stage1 stage2 stage3 stage4 stage5 stage6 stage7 readme
+
+readme:
+	$(PY) scripts/render_results.py

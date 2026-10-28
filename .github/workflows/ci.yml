@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies (CPU-only PyTorch)
+        run: |
+          uv venv --python 3.11 .venv
+          uv pip install --python .venv/bin/python -r requirements.txt \
+            --extra-index-url https://download.pytorch.org/whl/cpu \
+            --index-strategy unsafe-best-match
+
+      - name: Lint
+        run: make lint
+
+      - name: README results match results/
+        run: .venv/bin/python scripts/render_results.py --check
+
+      # The dataset is not downloaded and the C++ code is not built in CI; tests that
+      # need either are skipped. Model, quantization and export tests use an untrained
+      # DS-CNN.
+      - name: Tests
+        run: .venv/bin/python -m pytest -q -rs
