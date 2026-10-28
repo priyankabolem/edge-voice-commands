@@ -1,0 +1,11 @@
+# Direct dependencies, pinned to the exact versions installed in Stage 0.
+# Full transitive lock: requirements.lock.txt
+# Install: uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements.txt
+executorch==1.5.1
+numpy==2.4.6
+pytest==9.2.0
+pyyaml==6.0.3
+soundfile==0.14.0
+torch==2.15.0
+torchao==0.18.0
+torchaudio==2.11.1

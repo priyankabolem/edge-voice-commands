@@ -1,0 +1,35 @@
+seed: 1234
+
+paths:
+  data_root: data
+  dataset_dir: data/SpeechCommands/speech_commands_v0.02
+  features_dir: data/features
+  results_dir: results
+
+data:
+  sample_rate: 16000
+  clip_samples: 16000
+  keywords: ["yes", "no", "up", "down", "left", "right", "on", "off", "stop", "go"]
+  unknown_label: _unknown_
+  silence_label: _silence_
+  # Fraction of each split that is _silence_ crops.
+  silence_fraction: 0.1
+  # Each background-noise file is cut by time into disjoint train/val/test regions
+  # so that silence crops and augmentation noise never leak across splits.
+  noise_split: {training: 0.8, validation: 0.1, testing: 0.1}
+  # Silence crops are scaled by a gain drawn uniformly from [0, max_gain].
+  silence_max_gain: 1.0
+
+features:
+  frame_length: 400
+  hop_length: 160
+  n_fft: 512
+  n_mels: 40
+  f_min: 20.0
+  f_max: 7600.0
+  log_offset: 1.0e-6
+
+augmentation:
+  time_shift_ms: 100
+  noise_prob: 0.8
+  noise_max_gain: 0.1

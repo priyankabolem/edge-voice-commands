@@ -1,0 +1,12 @@
+{
+  "pte_path": "models/smoke_toy.pte",
+  "pte_size_bytes": 5520,
+  "num_xnnpack_delegate_calls": 1,
+  "non_delegated_ops": [],
+  "output_shape": [
+    1,
+    4
+  ],
+  "max_abs_diff_vs_pytorch": 2.9802322387695312e-08,
+  "passed": true
+}

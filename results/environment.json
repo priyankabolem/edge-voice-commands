@@ -1,0 +1,26 @@
+{
+  "os": "macOS-26.6.2-arm64-arm-64bit",
+  "os_version": "26.6.2",
+  "machine": "arm64",
+  "cpu_model": "Apple M3",
+  "cpu_cores": {
+    "logical": 8,
+    "physical": 8,
+    "performance": 4,
+    "efficiency": 4
+  },
+  "python": "3.11.15",
+  "packages": {
+    "torch": "2.15.0",
+    "torchaudio": "2.11.1",
+    "torchao": "0.18.0",
+    "executorch": "1.5.1",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3",
+    "pytest": "9.2.0",
+    "soundfile": "0.14.0"
+  },
+  "c_compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+  "cxx_compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+  "cmake": null
+}
