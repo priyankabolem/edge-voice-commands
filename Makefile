@@ -83,3 +83,14 @@ benchmark:
 
 profile-ops:
 	$(PY) -m kws.profile_ops
+
+.PHONY: stage7 streams evaluate-stream
+
+stage7: streams evaluate-stream
+
+streams:
+	$(PY) scripts/make_stream.py --split validation
+	$(PY) scripts/make_stream.py --split testing
+
+evaluate-stream:
+	$(PY) -m kws.evaluate_stream

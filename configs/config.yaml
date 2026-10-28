@@ -69,3 +69,20 @@ benchmark:
   profile:
     threads: 1
     iters: 200
+
+stream:
+  # Stream construction (scripts/make_stream.py); one stream per split.
+  clips_per_keyword: 3
+  num_unknown: 15
+  num_noise_gaps: 8
+  gap_s: [0.8, 1.6]
+  noise_gain: 0.1
+  onset_rel_threshold: 0.1
+  # Detection (cpp/apps/stream.cc).
+  threads: 1
+  infer_every_hops: 2
+  smoothing_window: 5
+  refractory_s: 1.0
+  # Evaluation (kws/evaluate_stream.py).
+  tolerance_s: 0.75
+  sweep_thresholds: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]

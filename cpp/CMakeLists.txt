@@ -30,7 +30,8 @@ string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type_upper)
 string(STRIP "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${_build_type_upper}}" KWS_EFFECTIVE_CXX_FLAGS)
 configure_file(include/kws/build_info.h.in "${CMAKE_CURRENT_BINARY_DIR}/generated/kws/build_info.h")
 
-add_library(kws_features STATIC src/assets.cc src/fft.cc src/log_mel.cc src/wav_reader.cc)
+add_library(kws_features STATIC src/assets.cc src/fft.cc src/log_mel.cc src/posterior.cc
+                                src/ring_buffer.cc src/wav_reader.cc)
 target_include_directories(kws_features PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/generated")
 target_compile_options(kws_features PRIVATE -Wall -Wextra -Wpedantic)
 
@@ -40,7 +41,7 @@ target_link_libraries(kws_model PUBLIC executorch::runtime executorch::backend_x
                                        executorch::threadpool)
 target_compile_options(kws_model PRIVATE -Wall -Wextra)
 
-foreach(app classify_wav batch_infer alloc_check bench)
+foreach(app classify_wav batch_infer alloc_check bench stream)
   add_executable(${app} apps/${app}.cc)
   target_link_libraries(${app} PRIVATE kws_features kws_model)
 endforeach()
@@ -49,6 +50,8 @@ if(APPLE)
   add_library(alloc_counter SHARED tools/alloc_counter.cc)
   target_include_directories(alloc_counter PUBLIC tools)
   target_link_libraries(alloc_check PRIVATE alloc_counter)
+  target_link_libraries(stream PRIVATE alloc_counter)
+  target_compile_definitions(stream PRIVATE KWS_HAVE_ALLOC_COUNTER)
 endif()
 
 add_executable(dump_features apps/dump_features.cc)
