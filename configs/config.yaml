@@ -33,3 +33,19 @@ augmentation:
   time_shift_ms: 100
   noise_prob: 0.8
   noise_max_gain: 0.1
+
+model:
+  channels: 64
+  num_blocks: 4
+  first_kernel: [10, 4]
+  first_stride: [2, 2]
+  first_padding: [4, 1]
+  max_params: 50000
+
+train:
+  epochs: 30
+  batch_size: 128
+  lr: 1.0e-3
+  label_smoothing: 0.1
+  num_workers: 6
+  checkpoint: models/kws_fp32.pt

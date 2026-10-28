@@ -25,3 +25,13 @@ test:
 
 lint:
 	uvx ruff check . && uvx ruff format --check .
+
+.PHONY: stage2 train evaluate
+
+stage2: train evaluate
+
+train:
+	$(PY) -m kws.train
+
+evaluate:
+	$(PY) -m kws.evaluate
