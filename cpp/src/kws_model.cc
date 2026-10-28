@@ -64,7 +64,8 @@ struct KwsModel::Impl {
   int num_classes = 0;
 };
 
-KwsModel::KwsModel(const std::string& pte_path) : impl_(std::make_unique<Impl>()) {
+KwsModel::KwsModel(const std::string& pte_path, executorch::runtime::EventTracer* event_tracer)
+    : impl_(std::make_unique<Impl>()) {
   executorch::runtime::runtime_init();
   Impl& m = *impl_;
 
@@ -96,7 +97,7 @@ KwsModel::KwsModel(const std::string& pte_path) : impl_(std::make_unique<Impl>()
   m.memory_manager = std::make_unique<MemoryManager>(
       m.method_allocator.get(), m.planned_memory.get(), m.temp_allocator.get());
 
-  auto method = m.program->load_method("forward", m.memory_manager.get());
+  auto method = m.program->load_method("forward", m.memory_manager.get(), event_tracer);
   Check(method.error(), "loading method forward");
   m.method = std::make_unique<Method>(std::move(method.get()));
 

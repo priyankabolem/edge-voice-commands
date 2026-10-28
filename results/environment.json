@@ -22,5 +22,6 @@
   },
   "c_compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
   "cxx_compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
-  "cmake": null
+  "cmake": "cmake version 4.4.4",
+  "ninja": "1.13.2.git.kitware.jobserver-pipe-1"
 }

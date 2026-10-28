@@ -1,0 +1,710 @@
+{
+  "method": "50 warm-up + 1000 timed iterations per stage, steady_clock, 3 process repeats; summary = median across repeats",
+  "hop_budget_us": 10000.0,
+  "summary_us": {
+    "fp32_threads1": {
+      "feature_frame": {
+        "min": 2.375,
+        "mean": 2.458,
+        "median": 2.458,
+        "p95": 2.459,
+        "p99": 2.667,
+        "max": 3.042
+      },
+      "feature_clip": {
+        "min": 236.958,
+        "mean": 238.692,
+        "median": 237.416,
+        "p95": 245.959,
+        "p99": 253.042,
+        "max": 269.125
+      },
+      "inference": {
+        "min": 579.125,
+        "mean": 584.96,
+        "median": 582.541,
+        "p95": 597.833,
+        "p99": 615.292,
+        "max": 655.875
+      },
+      "clip_end_to_end": {
+        "min": 818.083,
+        "mean": 824.068,
+        "median": 821.333,
+        "p95": 838.792,
+        "p99": 860.542,
+        "max": 904.792
+      }
+    },
+    "fp32_threads4": {
+      "feature_frame": {
+        "min": 2.375,
+        "mean": 2.448,
+        "median": 2.458,
+        "p95": 2.459,
+        "p99": 2.5,
+        "max": 2.542
+      },
+      "feature_clip": {
+        "min": 236.958,
+        "mean": 238.291,
+        "median": 237.333,
+        "p95": 243.792,
+        "p99": 251.75,
+        "max": 307.292
+      },
+      "inference": {
+        "min": 191.75,
+        "mean": 218.92,
+        "median": 217.084,
+        "p95": 238.542,
+        "p99": 295.0,
+        "max": 379.459
+      },
+      "clip_end_to_end": {
+        "min": 439.334,
+        "mean": 462.716,
+        "median": 460.084,
+        "p95": 481.542,
+        "p99": 543.834,
+        "max": 610.583
+      }
+    },
+    "int8_threads1": {
+      "feature_frame": {
+        "min": 2.375,
+        "mean": 2.461,
+        "median": 2.458,
+        "p95": 2.459,
+        "p99": 2.542,
+        "max": 7.625
+      },
+      "feature_clip": {
+        "min": 237.083,
+        "mean": 238.628,
+        "median": 237.458,
+        "p95": 243.75,
+        "p99": 252.125,
+        "max": 270.375
+      },
+      "inference": {
+        "min": 299.292,
+        "mean": 302.533,
+        "median": 301.541,
+        "p95": 309.125,
+        "p99": 319.5,
+        "max": 335.416
+      },
+      "clip_end_to_end": {
+        "min": 537.541,
+        "mean": 542.503,
+        "median": 540.25,
+        "p95": 553.125,
+        "p99": 565.667,
+        "max": 618.334
+      }
+    },
+    "int8_threads4": {
+      "feature_frame": {
+        "min": 2.375,
+        "mean": 2.464,
+        "median": 2.458,
+        "p95": 2.5,
+        "p99": 2.917,
+        "max": 3.167
+      },
+      "feature_clip": {
+        "min": 237.041,
+        "mean": 238.406,
+        "median": 237.708,
+        "p95": 243.666,
+        "p99": 250.25,
+        "max": 265.583
+      },
+      "inference": {
+        "min": 113.083,
+        "mean": 137.113,
+        "median": 136.959,
+        "p95": 152.625,
+        "p99": 176.25,
+        "max": 262.25
+      },
+      "clip_end_to_end": {
+        "min": 356.958,
+        "mean": 380.858,
+        "median": 379.417,
+        "p95": 397.292,
+        "p99": 436.375,
+        "max": 466.709
+      }
+    }
+  },
+  "build": {
+    "compiler": "AppleClang 21.0.0.21000334",
+    "build_type": "Release",
+    "cxx_flags": "-O3 -DNDEBUG",
+    "executorch_version": "1.5.1",
+    "executorch_runtime": "prebuilt (executorch pip wheel)"
+  },
+  "power": {
+    "power_source": "AC Power",
+    "low_power_mode": false
+  },
+  "environment": {
+    "os": "macOS-26.6.2-arm64-arm-64bit",
+    "os_version": "26.6.2",
+    "machine": "arm64",
+    "cpu_model": "Apple M3",
+    "cpu_cores": {
+      "logical": 8,
+      "physical": 8,
+      "performance": 4,
+      "efficiency": 4
+    },
+    "python": "3.11.15",
+    "packages": {
+      "torch": "2.15.0",
+      "torchaudio": "2.11.1",
+      "torchao": "0.18.0",
+      "executorch": "1.5.1",
+      "numpy": "2.4.6",
+      "pyyaml": "6.0.3",
+      "pytest": "9.2.0",
+      "soundfile": "0.14.0"
+    },
+    "c_compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+    "cxx_compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+    "cmake": "cmake version 4.4.4",
+    "ninja": "1.13.2.git.kitware.jobserver-pipe-1"
+  },
+  "runs": [
+    {
+      "model": "fp32",
+      "threads": 1,
+      "repeat": 0,
+      "threads_requested": 1,
+      "threads_default": 4,
+      "threads_active": 1,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.448,
+          "median": 2.458,
+          "p95": 2.459,
+          "p99": 2.5,
+          "max": 2.542
+        },
+        "feature_clip": {
+          "min": 237.417,
+          "mean": 239.252,
+          "median": 238.083,
+          "p95": 245.959,
+          "p99": 257.333,
+          "max": 269.125
+        },
+        "inference": {
+          "min": 579.208,
+          "mean": 585.746,
+          "median": 582.542,
+          "p95": 604.667,
+          "p99": 622.625,
+          "max": 693.625
+        },
+        "clip_end_to_end": {
+          "min": 817.0,
+          "mean": 824.068,
+          "median": 821.333,
+          "p95": 838.792,
+          "p99": 860.542,
+          "max": 904.792
+        }
+      }
+    },
+    {
+      "model": "fp32",
+      "threads": 1,
+      "repeat": 1,
+      "threads_requested": 1,
+      "threads_default": 4,
+      "threads_active": 1,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.461,
+          "median": 2.458,
+          "p95": 2.5,
+          "p99": 2.833,
+          "max": 3.042
+        },
+        "feature_clip": {
+          "min": 236.958,
+          "mean": 238.692,
+          "median": 237.25,
+          "p95": 246.625,
+          "p99": 253.042,
+          "max": 261.167
+        },
+        "inference": {
+          "min": 579.083,
+          "mean": 584.184,
+          "median": 582.333,
+          "p95": 595.209,
+          "p99": 609.375,
+          "max": 633.166
+        },
+        "clip_end_to_end": {
+          "min": 818.417,
+          "mean": 823.62,
+          "median": 821.0,
+          "p95": 835.334,
+          "p99": 850.625,
+          "max": 882.542
+        }
+      }
+    },
+    {
+      "model": "fp32",
+      "threads": 1,
+      "repeat": 2,
+      "threads_requested": 1,
+      "threads_default": 4,
+      "threads_active": 1,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.458,
+          "median": 2.458,
+          "p95": 2.459,
+          "p99": 2.667,
+          "max": 7.084
+        },
+        "feature_clip": {
+          "min": 236.834,
+          "mean": 238.254,
+          "median": 237.416,
+          "p95": 244.125,
+          "p99": 251.25,
+          "max": 270.791
+        },
+        "inference": {
+          "min": 579.125,
+          "mean": 584.96,
+          "median": 582.541,
+          "p95": 597.833,
+          "p99": 615.292,
+          "max": 655.875
+        },
+        "clip_end_to_end": {
+          "min": 818.083,
+          "mean": 826.811,
+          "median": 821.833,
+          "p95": 845.083,
+          "p99": 868.125,
+          "max": 911.125
+        }
+      }
+    },
+    {
+      "model": "fp32",
+      "threads": 4,
+      "repeat": 0,
+      "threads_requested": 4,
+      "threads_default": 4,
+      "threads_active": 4,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.473,
+          "median": 2.458,
+          "p95": 2.75,
+          "p99": 2.958,
+          "max": 4.041
+        },
+        "feature_clip": {
+          "min": 236.792,
+          "mean": 238.675,
+          "median": 237.584,
+          "p95": 243.708,
+          "p99": 252.75,
+          "max": 311.166
+        },
+        "inference": {
+          "min": 191.75,
+          "mean": 218.89,
+          "median": 216.958,
+          "p95": 236.042,
+          "p99": 296.5,
+          "max": 481.209
+        },
+        "clip_end_to_end": {
+          "min": 437.459,
+          "mean": 462.98,
+          "median": 459.333,
+          "p95": 481.542,
+          "p99": 559.417,
+          "max": 614.292
+        }
+      }
+    },
+    {
+      "model": "fp32",
+      "threads": 4,
+      "repeat": 1,
+      "threads_requested": 4,
+      "threads_default": 4,
+      "threads_active": 4,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.448,
+          "median": 2.458,
+          "p95": 2.459,
+          "p99": 2.5,
+          "max": 2.542
+        },
+        "feature_clip": {
+          "min": 236.958,
+          "mean": 238.291,
+          "median": 237.333,
+          "p95": 243.792,
+          "p99": 251.75,
+          "max": 282.209
+        },
+        "inference": {
+          "min": 190.167,
+          "mean": 218.965,
+          "median": 217.084,
+          "p95": 239.166,
+          "p99": 295.0,
+          "max": 373.625
+        },
+        "clip_end_to_end": {
+          "min": 439.334,
+          "mean": 462.716,
+          "median": 460.792,
+          "p95": 482.5,
+          "p99": 499.75,
+          "max": 610.583
+        }
+      }
+    },
+    {
+      "model": "fp32",
+      "threads": 4,
+      "repeat": 2,
+      "threads_requested": 4,
+      "threads_default": 4,
+      "threads_active": 4,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.416,
+          "mean": 2.448,
+          "median": 2.458,
+          "p95": 2.459,
+          "p99": 2.459,
+          "max": 2.542
+        },
+        "feature_clip": {
+          "min": 237.0,
+          "mean": 238.283,
+          "median": 237.25,
+          "p95": 243.916,
+          "p99": 251.625,
+          "max": 307.292
+        },
+        "inference": {
+          "min": 194.667,
+          "mean": 218.92,
+          "median": 217.792,
+          "p95": 238.542,
+          "p99": 253.875,
+          "max": 379.459
+        },
+        "clip_end_to_end": {
+          "min": 439.542,
+          "mean": 462.527,
+          "median": 460.084,
+          "p95": 481.333,
+          "p99": 543.834,
+          "max": 603.0
+        }
+      }
+    },
+    {
+      "model": "int8",
+      "threads": 1,
+      "repeat": 0,
+      "threads_requested": 1,
+      "threads_default": 4,
+      "threads_active": 1,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.469,
+          "median": 2.458,
+          "p95": 2.5,
+          "p99": 2.542,
+          "max": 7.625
+        },
+        "feature_clip": {
+          "min": 237.416,
+          "mean": 238.628,
+          "median": 237.709,
+          "p95": 243.625,
+          "p99": 252.125,
+          "max": 264.541
+        },
+        "inference": {
+          "min": 299.292,
+          "mean": 302.533,
+          "median": 301.541,
+          "p95": 309.125,
+          "p99": 318.542,
+          "max": 335.416
+        },
+        "clip_end_to_end": {
+          "min": 537.333,
+          "mean": 542.503,
+          "median": 540.125,
+          "p95": 554.125,
+          "p99": 572.959,
+          "max": 618.334
+        }
+      }
+    },
+    {
+      "model": "int8",
+      "threads": 1,
+      "repeat": 1,
+      "threads_requested": 1,
+      "threads_default": 4,
+      "threads_active": 1,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.461,
+          "median": 2.458,
+          "p95": 2.459,
+          "p99": 2.542,
+          "max": 8.042
+        },
+        "feature_clip": {
+          "min": 237.0,
+          "mean": 238.647,
+          "median": 237.334,
+          "p95": 245.75,
+          "p99": 255.25,
+          "max": 297.667
+        },
+        "inference": {
+          "min": 298.708,
+          "mean": 301.851,
+          "median": 300.666,
+          "p95": 309.125,
+          "p99": 321.25,
+          "max": 358.166
+        },
+        "clip_end_to_end": {
+          "min": 537.541,
+          "mean": 542.095,
+          "median": 540.25,
+          "p95": 553.125,
+          "p99": 564.75,
+          "max": 617.167
+        }
+      }
+    },
+    {
+      "model": "int8",
+      "threads": 1,
+      "repeat": 2,
+      "threads_requested": 1,
+      "threads_default": 4,
+      "threads_active": 1,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.451,
+          "median": 2.458,
+          "p95": 2.459,
+          "p99": 2.5,
+          "max": 2.541
+        },
+        "feature_clip": {
+          "min": 237.083,
+          "mean": 238.265,
+          "median": 237.458,
+          "p95": 243.75,
+          "p99": 250.958,
+          "max": 270.375
+        },
+        "inference": {
+          "min": 299.5,
+          "mean": 302.778,
+          "median": 301.792,
+          "p95": 310.292,
+          "p99": 319.5,
+          "max": 329.25
+        },
+        "clip_end_to_end": {
+          "min": 537.708,
+          "mean": 542.656,
+          "median": 540.875,
+          "p95": 552.0,
+          "p99": 565.667,
+          "max": 621.542
+        }
+      }
+    },
+    {
+      "model": "int8",
+      "threads": 4,
+      "repeat": 0,
+      "threads_requested": 4,
+      "threads_default": 4,
+      "threads_active": 4,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.464,
+          "median": 2.458,
+          "p95": 2.5,
+          "p99": 2.917,
+          "max": 4.416
+        },
+        "feature_clip": {
+          "min": 236.75,
+          "mean": 238.102,
+          "median": 237.167,
+          "p95": 243.666,
+          "p99": 250.25,
+          "max": 265.583
+        },
+        "inference": {
+          "min": 113.083,
+          "mean": 137.113,
+          "median": 137.083,
+          "p95": 152.375,
+          "p99": 158.458,
+          "max": 186.916
+        },
+        "clip_end_to_end": {
+          "min": 356.375,
+          "mean": 380.849,
+          "median": 379.167,
+          "p95": 397.333,
+          "p99": 443.5,
+          "max": 465.292
+        }
+      }
+    },
+    {
+      "model": "int8",
+      "threads": 4,
+      "repeat": 1,
+      "threads_requested": 4,
+      "threads_default": 4,
+      "threads_active": 4,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.451,
+          "median": 2.458,
+          "p95": 2.459,
+          "p99": 2.5,
+          "max": 2.542
+        },
+        "feature_clip": {
+          "min": 237.333,
+          "mean": 238.901,
+          "median": 238.041,
+          "p95": 244.0,
+          "p99": 251.541,
+          "max": 263.083
+        },
+        "inference": {
+          "min": 111.042,
+          "mean": 136.868,
+          "median": 136.334,
+          "p95": 152.625,
+          "p99": 176.25,
+          "max": 262.25
+        },
+        "clip_end_to_end": {
+          "min": 357.208,
+          "mean": 381.071,
+          "median": 380.167,
+          "p95": 397.292,
+          "p99": 420.167,
+          "max": 466.709
+        }
+      }
+    },
+    {
+      "model": "int8",
+      "threads": 4,
+      "repeat": 2,
+      "threads_requested": 4,
+      "threads_default": 4,
+      "threads_active": 4,
+      "warmup": 50,
+      "iters": 1000,
+      "latency_us": {
+        "feature_frame": {
+          "min": 2.375,
+          "mean": 2.483,
+          "median": 2.458,
+          "p95": 2.834,
+          "p99": 3.0,
+          "max": 3.167
+        },
+        "feature_clip": {
+          "min": 237.041,
+          "mean": 238.406,
+          "median": 237.708,
+          "p95": 243.375,
+          "p99": 249.75,
+          "max": 270.458
+        },
+        "inference": {
+          "min": 113.208,
+          "mean": 138.762,
+          "median": 136.959,
+          "p95": 154.792,
+          "p99": 218.25,
+          "max": 326.125
+        },
+        "clip_end_to_end": {
+          "min": 356.958,
+          "mean": 380.858,
+          "median": 379.417,
+          "p95": 397.208,
+          "p99": 436.375,
+          "max": 519.208
+        }
+      }
+    }
+  ]
+}

@@ -50,6 +50,12 @@ def first_line(cmd):
     return out.splitlines()[0] if out else None
 
 
+def tool_path(name):
+    """Prefer build tools installed in this venv, then fall back to PATH."""
+    venv_tool = Path(sys.executable).parent / name
+    return str(venv_tool) if venv_tool.exists() else shutil.which(name)
+
+
 def pkg_version(name):
     try:
         return metadata.version(name)
@@ -82,7 +88,8 @@ def main():
         },
         "c_compiler": first_line(["cc", "--version"]),
         "cxx_compiler": first_line(["c++", "--version"]),
-        "cmake": first_line(["cmake", "--version"]) if shutil.which("cmake") else None,
+        "cmake": first_line([tool_path("cmake"), "--version"]) if tool_path("cmake") else None,
+        "ninja": run([tool_path("ninja"), "--version"]) if tool_path("ninja") else None,
     }
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(env, indent=2) + "\n")

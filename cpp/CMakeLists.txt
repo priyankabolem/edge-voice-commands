@@ -34,12 +34,13 @@ add_library(kws_features STATIC src/assets.cc src/fft.cc src/log_mel.cc src/wav_
 target_include_directories(kws_features PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/generated")
 target_compile_options(kws_features PRIVATE -Wall -Wextra -Wpedantic)
 
-add_library(kws_model STATIC src/kws_model.cc)
+add_library(kws_model STATIC src/kws_model.cc src/threads.cc)
 target_include_directories(kws_model PUBLIC include)
-target_link_libraries(kws_model PUBLIC executorch::runtime executorch::backend_xnnpack)
+target_link_libraries(kws_model PUBLIC executorch::runtime executorch::backend_xnnpack
+                                       executorch::threadpool)
 target_compile_options(kws_model PRIVATE -Wall -Wextra)
 
-foreach(app classify_wav batch_infer alloc_check)
+foreach(app classify_wav batch_infer alloc_check bench)
   add_executable(${app} apps/${app}.cc)
   target_link_libraries(${app} PRIVATE kws_features kws_model)
 endforeach()
@@ -55,3 +56,6 @@ target_link_libraries(dump_features PRIVATE kws_features)
 
 add_executable(build_info apps/build_info.cc)
 target_link_libraries(build_info PRIVATE kws_features)
+
+add_executable(profile_ops apps/profile_ops.cc)
+target_link_libraries(profile_ops PRIVATE kws_model executorch::etdump)

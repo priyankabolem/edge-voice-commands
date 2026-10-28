@@ -4,6 +4,10 @@
 #include <memory>
 #include <string>
 
+namespace executorch::runtime {
+class EventTracer;
+}  // namespace executorch::runtime
+
 namespace kws {
 
 // Runs a keyword-spotting .pte program with the ExecuTorch runtime.
@@ -13,7 +17,9 @@ namespace kws {
 // and executes without heap allocation. Load errors throw std::runtime_error.
 class KwsModel {
  public:
-  explicit KwsModel(const std::string& pte_path);
+  // `event_tracer` (optional, e.g. an ETDumpGen for profiling) must outlive the model.
+  explicit KwsModel(const std::string& pte_path,
+                    executorch::runtime::EventTracer* event_tracer = nullptr);
   ~KwsModel();
   KwsModel(const KwsModel&) = delete;
   KwsModel& operator=(const KwsModel&) = delete;

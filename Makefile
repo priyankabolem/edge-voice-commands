@@ -72,3 +72,14 @@ parity-cpp:
 format:
 	uvx ruff format .
 	find cpp -path cpp/build -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format -i
+
+.PHONY: stage6 benchmark profile-ops
+
+stage6: benchmark profile-ops
+
+benchmark:
+	$(PY) scripts/record_environment.py > /dev/null
+	$(PY) -m kws.benchmark
+
+profile-ops:
+	$(PY) -m kws.profile_ops

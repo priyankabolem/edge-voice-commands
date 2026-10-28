@@ -60,3 +60,12 @@ quantization:
 export:
   fp32_pte: models/kws_fp32.pte
   int8_pte: models/kws_int8.pte
+
+benchmark:
+  threads: [1, 4]
+  warmup: 50
+  iters: 1000
+  repeats: 3
+  profile:
+    threads: 1
+    iters: 200
