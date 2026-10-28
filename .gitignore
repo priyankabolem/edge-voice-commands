@@ -13,3 +13,4 @@ data/
 models/*.pte
 models/*.pt
 models/*.ckpt
+models/*.pt2

@@ -1,0 +1,98 @@
+{
+  "fp32_accuracy": 0.9455713998794939,
+  "num_test_clips": 4979,
+  "runs": [
+    {
+      "calibration_samples": 100,
+      "per_channel_weights": true,
+      "test_accuracy": 0.9443663386222133,
+      "drop_points": 0.121,
+      "top1_agreement_with_fp32": 0.988351047039032,
+      "logit_sqnr_db": 27.77,
+      "max_abs_logit_diff": 2.2368760108947754
+    },
+    {
+      "calibration_samples": 100,
+      "per_channel_weights": false,
+      "test_accuracy": 0.9427595902791726,
+      "drop_points": 0.281,
+      "top1_agreement_with_fp32": 0.9853384494781494,
+      "logit_sqnr_db": 25.15,
+      "max_abs_logit_diff": 2.2368760108947754
+    },
+    {
+      "calibration_samples": 500,
+      "per_channel_weights": true,
+      "test_accuracy": 0.9435629644506929,
+      "drop_points": 0.201,
+      "top1_agreement_with_fp32": 0.990962028503418,
+      "logit_sqnr_db": 27.02,
+      "max_abs_logit_diff": 2.156618595123291
+    },
+    {
+      "calibration_samples": 500,
+      "per_channel_weights": false,
+      "test_accuracy": 0.943763807993573,
+      "drop_points": 0.181,
+      "top1_agreement_with_fp32": 0.984735906124115,
+      "logit_sqnr_db": 25.41,
+      "max_abs_logit_diff": 2.156618595123291
+    },
+    {
+      "calibration_samples": 2000,
+      "per_channel_weights": true,
+      "test_accuracy": 0.9449688692508535,
+      "drop_points": 0.06,
+      "top1_agreement_with_fp32": 0.9913637042045593,
+      "logit_sqnr_db": 26.94,
+      "max_abs_logit_diff": 1.4055089950561523
+    },
+    {
+      "calibration_samples": 2000,
+      "per_channel_weights": false,
+      "test_accuracy": 0.9431612773649327,
+      "drop_points": 0.241,
+      "top1_agreement_with_fp32": 0.9839324951171875,
+      "logit_sqnr_db": 24.59,
+      "max_abs_logit_diff": 1.270287275314331
+    }
+  ],
+  "folded_weight_sqnr_db": {
+    "conv": {
+      "per_tensor": 38.11,
+      "per_channel": 45.86
+    },
+    "blocks.0.depthwise": {
+      "per_tensor": 39.6,
+      "per_channel": 48.68
+    },
+    "blocks.0.pointwise": {
+      "per_tensor": 40.11,
+      "per_channel": 44.42
+    },
+    "blocks.1.depthwise": {
+      "per_tensor": 39.64,
+      "per_channel": 48.02
+    },
+    "blocks.1.pointwise": {
+      "per_tensor": 39.51,
+      "per_channel": 44.19
+    },
+    "blocks.2.depthwise": {
+      "per_tensor": 39.08,
+      "per_channel": 48.22
+    },
+    "blocks.2.pointwise": {
+      "per_tensor": 39.08,
+      "per_channel": 44.05
+    },
+    "blocks.3.depthwise": {
+      "per_tensor": 35.79,
+      "per_channel": 50.12
+    },
+    "blocks.3.pointwise": {
+      "per_tensor": 40.84,
+      "per_channel": 44.6
+    }
+  }
+}

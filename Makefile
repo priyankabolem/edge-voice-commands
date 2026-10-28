@@ -35,3 +35,13 @@ train:
 
 evaluate:
 	$(PY) -m kws.evaluate
+
+.PHONY: stage3 quantize quant-experiments
+
+stage3: quantize quant-experiments
+
+quantize:
+	$(PY) -m kws.quantize
+
+quant-experiments:
+	$(PY) -m kws.quantize --experiments

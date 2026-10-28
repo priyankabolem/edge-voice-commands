@@ -49,3 +49,10 @@ train:
   label_smoothing: 0.1
   num_workers: 6
   checkpoint: models/kws_fp32.pt
+
+quantization:
+  # Calibration uses clean (un-augmented) training clips only.
+  calibration_samples: 500
+  per_channel: true
+  experiment_calibration_sizes: [100, 500, 2000]
+  quantized_program: models/kws_int8_pt2e.pt2
