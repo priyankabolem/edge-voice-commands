@@ -1,0 +1,53 @@
+{
+  "build": {
+    "compiler": "AppleClang 21.0.0.21000334",
+    "build_type": "Release",
+    "cxx_flags": "-O3 -DNDEBUG",
+    "executorch_version": "1.5.1",
+    "executorch_runtime": "prebuilt (executorch pip wheel)"
+  },
+  "features": {
+    "num_clips": 200,
+    "max_abs_diff": 0.0001055598258972168,
+    "mean_abs_diff": 1.613582156778648e-07,
+    "target_max_abs_diff": 0.001,
+    "passed": true
+  },
+  "end_to_end": {
+    "num_test_clips": 4979,
+    "fp32": {
+      "cpp_accuracy": 0.9455714225769043,
+      "python_pte_accuracy": 0.9455714225769043,
+      "top1_agreement_cpp_vs_python_pte": 1.0,
+      "max_abs_logit_diff": 2.110004425048828e-05,
+      "mean_abs_logit_diff": 7.947529070406745e-07,
+      "num_clips_with_logit_diff_above_1e-4": 0
+    },
+    "int8": {
+      "cpp_accuracy": 0.9439646601676941,
+      "python_pte_accuracy": 0.9439646601676941,
+      "top1_agreement_cpp_vs_python_pte": 1.0,
+      "max_abs_logit_diff": 0.15770816802978516,
+      "mean_abs_logit_diff": 0.00035458020283840597,
+      "num_clips_with_logit_diff_above_1e-4": 44
+    }
+  },
+  "hot_path_allocations": {
+    "fp32": {
+      "iterations": 1000,
+      "allocations": {
+        "feature_frame": 0,
+        "feature_clip": 0,
+        "inference": 0
+      }
+    },
+    "int8": {
+      "iterations": 1000,
+      "allocations": {
+        "feature_frame": 0,
+        "feature_clip": 0,
+        "inference": 0
+      }
+    }
+  }
+}

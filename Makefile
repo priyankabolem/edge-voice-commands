@@ -25,6 +25,7 @@ test:
 
 lint:
 	uvx ruff check . && uvx ruff format --check .
+	find cpp -path cpp/build -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format --dry-run --Werror
 
 .PHONY: stage2 train evaluate
 
@@ -52,3 +53,22 @@ stage4: export
 
 export:
 	$(PY) -m kws.export
+
+.PHONY: stage5 assets cpp parity-cpp format
+
+stage5: assets cpp parity-cpp
+
+assets:
+	$(PY) -m kws.export_assets
+
+cpp:
+	PATH="$(CURDIR)/.venv/bin:$$PATH" cmake -S cpp -B cpp/build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+		-DPython3_EXECUTABLE=$(CURDIR)/.venv/bin/python
+	PATH="$(CURDIR)/.venv/bin:$$PATH" cmake --build cpp/build
+
+parity-cpp:
+	$(PY) -m kws.parity_cpp
+
+format:
+	uvx ruff format .
+	find cpp -path cpp/build -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format -i

@@ -1,0 +1,14 @@
+#ifndef KWS_BUILD_INFO_H_
+#define KWS_BUILD_INFO_H_
+
+namespace kws {
+
+constexpr const char* kCompiler = "@CMAKE_CXX_COMPILER_ID@ @CMAKE_CXX_COMPILER_VERSION@";
+constexpr const char* kBuildType = "@CMAKE_BUILD_TYPE@";
+constexpr const char* kCxxFlags = "@KWS_EFFECTIVE_CXX_FLAGS@";
+constexpr const char* kExecuTorchVersion = "@EXECUTORCH_BUILD_VERSION@";
+constexpr const char* kExecuTorchSource = "@KWS_EXECUTORCH_SOURCE@";
+
+}  // namespace kws
+
+#endif  // KWS_BUILD_INFO_H_

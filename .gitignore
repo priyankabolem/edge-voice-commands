@@ -14,3 +14,9 @@ models/*.pte
 models/*.pt
 models/*.ckpt
 models/*.pt2
+
+# Generated feature assets
+assets/
+
+# C++ build output
+cpp/build/
