@@ -56,3 +56,7 @@ quantization:
   per_channel: true
   experiment_calibration_sizes: [100, 500, 2000]
   quantized_program: models/kws_int8_pt2e.pt2
+
+export:
+  fp32_pte: models/kws_fp32.pte
+  int8_pte: models/kws_int8.pte

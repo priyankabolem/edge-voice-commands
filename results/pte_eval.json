@@ -1,0 +1,33 @@
+{
+  "runtime": "ExecuTorch Python runtime, XNNPACK delegate, batch 1",
+  "num_test_clips": 4979,
+  "test_accuracy": {
+    "fp32_pytorch": 0.9455714225769043,
+    "fp32_pte": 0.9455714225769043,
+    "int8_pytorch": 0.9435629844665527,
+    "int8_pte": 0.9439646601676941
+  },
+  "file_size_bytes": {
+    "fp32_checkpoint_pt": 117049,
+    "fp32_pte": 100016,
+    "int8_pte": 44464
+  },
+  "delegation": {
+    "fp32": {
+      "num_delegated_subgraphs": 1,
+      "num_delegated_nodes": 39,
+      "num_non_delegated_nodes": 1,
+      "non_delegated_ops": [
+        "getitem"
+      ]
+    },
+    "int8": {
+      "num_delegated_subgraphs": 1,
+      "num_delegated_nodes": 57,
+      "num_non_delegated_nodes": 1,
+      "non_delegated_ops": [
+        "getitem"
+      ]
+    }
+  }
+}

@@ -45,3 +45,10 @@ quantize:
 
 quant-experiments:
 	$(PY) -m kws.quantize --experiments
+
+.PHONY: stage4 export
+
+stage4: export
+
+export:
+	$(PY) -m kws.export
