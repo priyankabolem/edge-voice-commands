@@ -1,0 +1,831 @@
+{
+  "method": "threshold chosen on the validation stream (max correct - false alarms); test stream scored at that threshold",
+  "models": {
+    "baseline": {
+      "int8_pte": "models/kws_int8.pte",
+      "augmentation": {
+        "time_shift_ms": 100,
+        "noise_prob": 0.8,
+        "noise_max_gain": 0.1
+      },
+      "clip_accuracy": {
+        "fp32_pytorch": 0.9455713998794939,
+        "int8_pte": 0.9439646601676941
+      }
+    },
+    "streaming_model": {
+      "int8_pte": "models/kws_stream_int8.pte",
+      "augmentation": {
+        "time_shift_ms": 300,
+        "noise_prob": 0.8,
+        "noise_max_gain": 0.1,
+        "keyword_keep_min": 0.8,
+        "tail_negative_prob": 0.2,
+        "tail_visible": [
+          0.15,
+          0.6
+        ],
+        "onset_rel_threshold": 0.1
+      },
+      "clip_accuracy": {
+        "fp32_pytorch": 0.9214701747338823,
+        "int8_pte": 0.9204659461975098
+      }
+    }
+  },
+  "runs": [
+    {
+      "model": "baseline",
+      "min_consecutive": 1,
+      "threshold": 0.6,
+      "validation": {
+        "threshold": 0.6,
+        "detection_rate": 0.8,
+        "correct": 24,
+        "missed": 6,
+        "false_alarms": 5,
+        "false_alarms_per_hour": 155.22
+      },
+      "test": {
+        "threshold": 0.6,
+        "detection_rate": 0.7666666666666667,
+        "correct": 23,
+        "missed": 7,
+        "false_alarms": 6,
+        "false_alarms_per_hour": 178.82
+      },
+      "test_detection_delay_median_s": 0.217,
+      "test_hop_latency_p99_us": 316.584,
+      "test_false_alarm_detections": [
+        {
+          "time_s": 22.93,
+          "label": "up",
+          "score": 0.9424
+        },
+        {
+          "time_s": 40.19,
+          "label": "up",
+          "score": 0.668
+        },
+        {
+          "time_s": 85.39,
+          "label": "stop",
+          "score": 0.6963
+        },
+        {
+          "time_s": 92.09,
+          "label": "go",
+          "score": 0.6279
+        },
+        {
+          "time_s": 99.17,
+          "label": "no",
+          "score": 0.6094
+        },
+        {
+          "time_s": 116.53,
+          "label": "on",
+          "score": 0.6201
+        }
+      ],
+      "test_missed_keywords": [
+        {
+          "label": "on",
+          "onset_s": 39.3889
+        },
+        {
+          "label": "up",
+          "onset_s": 42.3176
+        },
+        {
+          "label": "down",
+          "onset_s": 58.2987
+        },
+        {
+          "label": "no",
+          "onset_s": 69.5592
+        },
+        {
+          "label": "down",
+          "onset_s": 91.7223
+        },
+        {
+          "label": "right",
+          "onset_s": 105.4339
+        },
+        {
+          "label": "on",
+          "onset_s": 115.7096
+        }
+      ],
+      "sweep": {
+        "validation": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.8,
+            "correct": 24,
+            "missed": 6,
+            "false_alarms": 27,
+            "false_alarms_per_hour": 838.17
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.9,
+            "correct": 27,
+            "missed": 3,
+            "false_alarms": 14,
+            "false_alarms_per_hour": 434.61
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.8333333333333334,
+            "correct": 25,
+            "missed": 5,
+            "false_alarms": 7,
+            "false_alarms_per_hour": 217.3
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.8,
+            "correct": 24,
+            "missed": 6,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.5333333333333333,
+            "correct": 16,
+            "missed": 14,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.43333333333333335,
+            "correct": 13,
+            "missed": 17,
+            "false_alarms": 3,
+            "false_alarms_per_hour": 93.13
+          }
+        ],
+        "testing": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.8333333333333334,
+            "correct": 25,
+            "missed": 5,
+            "false_alarms": 30,
+            "false_alarms_per_hour": 894.09
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.8666666666666667,
+            "correct": 26,
+            "missed": 4,
+            "false_alarms": 15,
+            "false_alarms_per_hour": 447.05
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.8666666666666667,
+            "correct": 26,
+            "missed": 4,
+            "false_alarms": 7,
+            "false_alarms_per_hour": 208.62
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.7666666666666667,
+            "correct": 23,
+            "missed": 7,
+            "false_alarms": 6,
+            "false_alarms_per_hour": 178.82
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 3,
+            "false_alarms_per_hour": 89.41
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.6333333333333333,
+            "correct": 19,
+            "missed": 11,
+            "false_alarms": 1,
+            "false_alarms_per_hour": 29.8
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.5,
+            "correct": 15,
+            "missed": 15,
+            "false_alarms": 1,
+            "false_alarms_per_hour": 29.8
+          }
+        ]
+      }
+    },
+    {
+      "model": "baseline",
+      "min_consecutive": 3,
+      "threshold": 0.6,
+      "validation": {
+        "threshold": 0.6,
+        "detection_rate": 0.8,
+        "correct": 24,
+        "missed": 6,
+        "false_alarms": 5,
+        "false_alarms_per_hour": 155.22
+      },
+      "test": {
+        "threshold": 0.6,
+        "detection_rate": 0.7333333333333333,
+        "correct": 22,
+        "missed": 8,
+        "false_alarms": 5,
+        "false_alarms_per_hour": 149.02
+      },
+      "test_detection_delay_median_s": 0.262,
+      "test_hop_latency_p99_us": 316.75,
+      "test_false_alarm_detections": [
+        {
+          "time_s": 22.97,
+          "label": "up",
+          "score": 0.748
+        },
+        {
+          "time_s": 40.23,
+          "label": "up",
+          "score": 0.6815
+        },
+        {
+          "time_s": 85.43,
+          "label": "stop",
+          "score": 0.8035
+        },
+        {
+          "time_s": 92.13,
+          "label": "go",
+          "score": 0.6607
+        },
+        {
+          "time_s": 116.57,
+          "label": "on",
+          "score": 0.6536
+        }
+      ],
+      "test_missed_keywords": [
+        {
+          "label": "up",
+          "onset_s": 14.4322
+        },
+        {
+          "label": "on",
+          "onset_s": 39.3889
+        },
+        {
+          "label": "up",
+          "onset_s": 42.3176
+        },
+        {
+          "label": "down",
+          "onset_s": 58.2987
+        },
+        {
+          "label": "no",
+          "onset_s": 69.5592
+        },
+        {
+          "label": "down",
+          "onset_s": 91.7223
+        },
+        {
+          "label": "right",
+          "onset_s": 105.4339
+        },
+        {
+          "label": "on",
+          "onset_s": 115.7096
+        }
+      ],
+      "sweep": {
+        "validation": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.8333333333333334,
+            "correct": 25,
+            "missed": 5,
+            "false_alarms": 21,
+            "false_alarms_per_hour": 651.91
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.8,
+            "correct": 24,
+            "missed": 6,
+            "false_alarms": 13,
+            "false_alarms_per_hour": 403.57
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.8,
+            "correct": 24,
+            "missed": 6,
+            "false_alarms": 7,
+            "false_alarms_per_hour": 217.3
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.8,
+            "correct": 24,
+            "missed": 6,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.6666666666666666,
+            "correct": 20,
+            "missed": 10,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.5,
+            "correct": 15,
+            "missed": 15,
+            "false_alarms": 4,
+            "false_alarms_per_hour": 124.17
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.36666666666666664,
+            "correct": 11,
+            "missed": 19,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          }
+        ],
+        "testing": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.8333333333333334,
+            "correct": 25,
+            "missed": 5,
+            "false_alarms": 17,
+            "false_alarms_per_hour": 506.65
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.8666666666666667,
+            "correct": 26,
+            "missed": 4,
+            "false_alarms": 13,
+            "false_alarms_per_hour": 387.44
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.8333333333333334,
+            "correct": 25,
+            "missed": 5,
+            "false_alarms": 7,
+            "false_alarms_per_hour": 208.62
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.7333333333333333,
+            "correct": 22,
+            "missed": 8,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 149.02
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 1,
+            "false_alarms_per_hour": 29.8
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.6333333333333333,
+            "correct": 19,
+            "missed": 11,
+            "false_alarms": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.5,
+            "correct": 15,
+            "missed": 15,
+            "false_alarms": 1,
+            "false_alarms_per_hour": 29.8
+          }
+        ]
+      }
+    },
+    {
+      "model": "streaming_model",
+      "min_consecutive": 1,
+      "threshold": 0.7,
+      "validation": {
+        "threshold": 0.7,
+        "detection_rate": 0.7333333333333333,
+        "correct": 22,
+        "missed": 8,
+        "false_alarms": 4,
+        "false_alarms_per_hour": 124.17
+      },
+      "test": {
+        "threshold": 0.7,
+        "detection_rate": 0.7,
+        "correct": 21,
+        "missed": 9,
+        "false_alarms": 3,
+        "false_alarms_per_hour": 89.41
+      },
+      "test_detection_delay_median_s": 0.247,
+      "test_hop_latency_p99_us": 322.333,
+      "test_false_alarm_detections": [
+        {
+          "time_s": 22.91,
+          "label": "up",
+          "score": 0.7199
+        },
+        {
+          "time_s": 40.17,
+          "label": "up",
+          "score": 0.7096
+        },
+        {
+          "time_s": 85.41,
+          "label": "stop",
+          "score": 0.7061
+        }
+      ],
+      "test_missed_keywords": [
+        {
+          "label": "up",
+          "onset_s": 14.4322
+        },
+        {
+          "label": "yes",
+          "onset_s": 35.1926
+        },
+        {
+          "label": "on",
+          "onset_s": 39.3889
+        },
+        {
+          "label": "up",
+          "onset_s": 42.3176
+        },
+        {
+          "label": "down",
+          "onset_s": 58.2987
+        },
+        {
+          "label": "no",
+          "onset_s": 69.5592
+        },
+        {
+          "label": "down",
+          "onset_s": 91.7223
+        },
+        {
+          "label": "right",
+          "onset_s": 105.4339
+        },
+        {
+          "label": "on",
+          "onset_s": 115.7096
+        }
+      ],
+      "sweep": {
+        "validation": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.6666666666666666,
+            "correct": 20,
+            "missed": 10,
+            "false_alarms": 18,
+            "false_alarms_per_hour": 558.78
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.6666666666666666,
+            "correct": 20,
+            "missed": 10,
+            "false_alarms": 14,
+            "false_alarms_per_hour": 434.61
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 8,
+            "false_alarms_per_hour": 248.35
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.6666666666666666,
+            "correct": 20,
+            "missed": 10,
+            "false_alarms": 7,
+            "false_alarms_per_hour": 217.3
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.7333333333333333,
+            "correct": 22,
+            "missed": 8,
+            "false_alarms": 4,
+            "false_alarms_per_hour": 124.17
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.5333333333333333,
+            "correct": 16,
+            "missed": 14,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.3333333333333333,
+            "correct": 10,
+            "missed": 20,
+            "false_alarms": 4,
+            "false_alarms_per_hour": 124.17
+          }
+        ],
+        "testing": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.8,
+            "correct": 24,
+            "missed": 6,
+            "false_alarms": 18,
+            "false_alarms_per_hour": 536.45
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.8333333333333334,
+            "correct": 25,
+            "missed": 5,
+            "false_alarms": 9,
+            "false_alarms_per_hour": 268.23
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.7333333333333333,
+            "correct": 22,
+            "missed": 8,
+            "false_alarms": 6,
+            "false_alarms_per_hour": 178.82
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.7333333333333333,
+            "correct": 22,
+            "missed": 8,
+            "false_alarms": 4,
+            "false_alarms_per_hour": 119.21
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 3,
+            "false_alarms_per_hour": 89.41
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.5666666666666667,
+            "correct": 17,
+            "missed": 13,
+            "false_alarms": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.4666666666666667,
+            "correct": 14,
+            "missed": 16,
+            "false_alarms": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "model": "streaming_model",
+      "min_consecutive": 3,
+      "threshold": 0.6,
+      "validation": {
+        "threshold": 0.6,
+        "detection_rate": 0.7333333333333333,
+        "correct": 22,
+        "missed": 8,
+        "false_alarms": 5,
+        "false_alarms_per_hour": 155.22
+      },
+      "test": {
+        "threshold": 0.6,
+        "detection_rate": 0.7333333333333333,
+        "correct": 22,
+        "missed": 8,
+        "false_alarms": 3,
+        "false_alarms_per_hour": 89.41
+      },
+      "test_detection_delay_median_s": 0.265,
+      "test_hop_latency_p99_us": 317.958,
+      "test_false_alarm_detections": [
+        {
+          "time_s": 40.19,
+          "label": "up",
+          "score": 0.6947
+        },
+        {
+          "time_s": 85.43,
+          "label": "stop",
+          "score": 0.6764
+        },
+        {
+          "time_s": 116.69,
+          "label": "on",
+          "score": 0.6109
+        }
+      ],
+      "test_missed_keywords": [
+        {
+          "label": "yes",
+          "onset_s": 35.1926
+        },
+        {
+          "label": "on",
+          "onset_s": 39.3889
+        },
+        {
+          "label": "up",
+          "onset_s": 42.3176
+        },
+        {
+          "label": "down",
+          "onset_s": 58.2987
+        },
+        {
+          "label": "no",
+          "onset_s": 69.5592
+        },
+        {
+          "label": "down",
+          "onset_s": 91.7223
+        },
+        {
+          "label": "right",
+          "onset_s": 105.4339
+        },
+        {
+          "label": "on",
+          "onset_s": 115.7096
+        }
+      ],
+      "sweep": {
+        "validation": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 15,
+            "false_alarms_per_hour": 465.65
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 12,
+            "false_alarms_per_hour": 372.52
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 8,
+            "false_alarms_per_hour": 248.35
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.7333333333333333,
+            "correct": 22,
+            "missed": 8,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.7,
+            "correct": 21,
+            "missed": 9,
+            "false_alarms": 5,
+            "false_alarms_per_hour": 155.22
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.5,
+            "correct": 15,
+            "missed": 15,
+            "false_alarms": 6,
+            "false_alarms_per_hour": 186.26
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.26666666666666666,
+            "correct": 8,
+            "missed": 22,
+            "false_alarms": 4,
+            "false_alarms_per_hour": 124.17
+          }
+        ],
+        "testing": [
+          {
+            "threshold": 0.3,
+            "detection_rate": 0.8333333333333334,
+            "correct": 25,
+            "missed": 5,
+            "false_alarms": 16,
+            "false_alarms_per_hour": 476.85
+          },
+          {
+            "threshold": 0.4,
+            "detection_rate": 0.8,
+            "correct": 24,
+            "missed": 6,
+            "false_alarms": 8,
+            "false_alarms_per_hour": 238.42
+          },
+          {
+            "threshold": 0.5,
+            "detection_rate": 0.7333333333333333,
+            "correct": 22,
+            "missed": 8,
+            "false_alarms": 6,
+            "false_alarms_per_hour": 178.82
+          },
+          {
+            "threshold": 0.6,
+            "detection_rate": 0.7333333333333333,
+            "correct": 22,
+            "missed": 8,
+            "false_alarms": 3,
+            "false_alarms_per_hour": 89.41
+          },
+          {
+            "threshold": 0.7,
+            "detection_rate": 0.6666666666666666,
+            "correct": 20,
+            "missed": 10,
+            "false_alarms": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "threshold": 0.8,
+            "detection_rate": 0.5666666666666667,
+            "correct": 17,
+            "missed": 13,
+            "false_alarms": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "threshold": 0.9,
+            "detection_rate": 0.43333333333333335,
+            "correct": 13,
+            "missed": 17,
+            "false_alarms": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      }
+    }
+  ]
+}

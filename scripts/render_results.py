@@ -301,6 +301,40 @@ def render_runtimes() -> str:
     )
 
 
+def render_streaming_comparison() -> str:
+    r = load("streaming_comparison.json")
+    names = {"baseline": "Baseline", "streaming_model": "Streaming-aware"}
+    rows = []
+    for run in r["runs"]:
+        clip = r["models"][run["model"]]["clip_accuracy"]
+        v, t = run["validation"], run["test"]
+        rows.append(
+            [
+                names[run["model"]],
+                run["min_consecutive"],
+                pct(clip["int8_pte"]),
+                run["threshold"],
+                f"{v['correct']} / {v['false_alarms']}",
+                f"{t['correct']} / {t['false_alarms']}",
+                f"{t['false_alarms_per_hour']:.1f}",
+                f"{run['test_detection_delay_median_s']:.3f} s",
+            ]
+        )
+    return table(
+        [
+            "Model",
+            "Consecutive",
+            "Clip accuracy (INT8 `.pte`)",
+            "Threshold (from validation)",
+            "Validation: detected / FA",
+            "Test: detected / FA",
+            "Test FA per hour",
+            "Test median delay",
+        ],
+        rows,
+    )
+
+
 SECTIONS = {
     "model": render_model,
     "accuracy": render_accuracy,
@@ -311,6 +345,7 @@ SECTIONS = {
     "profile": render_profile,
     "streaming": render_streaming,
     "runtimes": render_runtimes,
+    "streaming_comparison": render_streaming_comparison,
     "environment": render_environment,
 }
 

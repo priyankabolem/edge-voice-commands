@@ -15,9 +15,26 @@ SPLITS = ("training", "validation", "testing")
 NOISE_DIR = "_background_noise_"
 
 
-def load_config(path: str | Path = ROOT / "configs" / "config.yaml") -> dict:
+def _merge(base: dict, override: dict) -> dict:
+    out = dict(base)
+    for key, value in override.items():
+        out[key] = _merge(base[key], value) if isinstance(value, dict) and key in base else value
+    return out
+
+
+def load_config(
+    path: str | Path = ROOT / "configs" / "config.yaml", variant: str | None = None
+) -> dict:
+    """Load the config; a variant's overrides from `variants:` are merged on top."""
     with open(path) as f:
-        return yaml.safe_load(f)
+        cfg = yaml.safe_load(f)
+    variants = cfg.pop("variants", {})
+    if variant is not None:
+        if variant not in variants:
+            raise KeyError(f"unknown config variant {variant!r}")
+        cfg = _merge(cfg, variants[variant])
+        (ROOT / cfg["paths"]["results_dir"]).mkdir(parents=True, exist_ok=True)
+    return cfg
 
 
 def label_names(cfg: dict) -> list[str]:
@@ -43,6 +60,20 @@ def pad_or_trim(audio: np.ndarray, length: int) -> np.ndarray:
 
 def int16_to_float(audio: np.ndarray) -> np.ndarray:
     return audio.astype(np.float32) / 32768.0
+
+
+def speech_bounds(
+    clip: np.ndarray, sample_rate: int, rel_threshold: float
+) -> tuple[float, float] | None:
+    """First and last 10 ms frame whose RMS exceeds rel_threshold x the clip's peak RMS,
+    in seconds; None for an all-zero clip."""
+    hop = sample_rate // 100
+    frames = clip[: len(clip) // hop * hop].astype(np.float64).reshape(-1, hop)
+    rms = np.sqrt((frames**2).mean(axis=1))
+    if rms.max() == 0:
+        return None
+    active = np.flatnonzero(rms > rel_threshold * rms.max())
+    return active[0] * hop / sample_rate, (active[-1] + 1) * hop / sample_rate
 
 
 def speaker_id(relpath: str) -> str:
@@ -172,11 +203,42 @@ class Augmenter:
             out[:] = audio
         return out
 
-    def __call__(self, audio: np.ndarray, rng: random.Random) -> np.ndarray:
-        """Float waveform in [-1, 1] -> augmented float waveform in [-1, 1]."""
-        out = self.time_shift(audio, rng.randint(-self.max_shift, self.max_shift))
+    def __call__(
+        self, audio: np.ndarray, rng: random.Random, shift: int | None = None
+    ) -> np.ndarray:
+        """Float waveform in [-1, 1] -> augmented float waveform in [-1, 1].
+
+        With `shift=None` a uniform random shift within +-time_shift_ms is drawn.
+        """
+        if shift is None:
+            shift = rng.randint(-self.max_shift, self.max_shift)
+        out = self.time_shift(audio, shift)
         if rng.random() < self.noise_prob:
             region = rng.choice(self.noise)
             noise = int16_to_float(region.random_crop(rng, len(audio)))
             out = out + rng.uniform(0.0, self.noise_max_gain) * noise
         return np.clip(out, -1.0, 1.0).astype(np.float32)
+
+
+def keyword_shift(
+    onset: int, offset: int, rng: random.Random, aug: dict, sample_rate: int, length: int
+) -> tuple[int, bool]:
+    """Time shift for a keyword clip in streaming-aware training.
+
+    With probability tail_negative_prob, returns a shift that leaves only the last
+    tail_visible fraction of the word at the start of the window (the clip is then a
+    word-tail negative, to be labelled _unknown_). Otherwise draws shifts within
+    +-time_shift_ms until at least keyword_keep_min of the word stays inside the window.
+    Returns (shift in samples, is_tail_negative).
+    """
+    duration = offset - onset
+    if rng.random() < aug["tail_negative_prob"]:
+        visible = rng.uniform(*aug["tail_visible"])
+        return int(round(visible * duration)) - offset, True
+    max_shift = int(aug["time_shift_ms"] * sample_rate / 1000)
+    for _ in range(20):
+        shift = rng.randint(-max_shift, max_shift)
+        inside = min(offset + shift, length) - max(onset + shift, 0)
+        if inside >= aug["keyword_keep_min"] * duration:
+            return shift, False
+    return 0, False

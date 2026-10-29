@@ -195,8 +195,9 @@ def run_experiments(cfg: dict):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--experiments", action="store_true")
+    parser.add_argument("--variant", help="config variant, e.g. streaming_model")
     args = parser.parse_args()
-    cfg = load_config()
+    cfg = load_config(variant=args.variant)
     if args.experiments:
         run_experiments(cfg)
     else:

@@ -9,6 +9,7 @@ detections minus false alarms; ties go to the higher threshold) and then reporte
 the test stream.
 """
 
+import argparse
 import json
 import statistics
 import subprocess
@@ -25,7 +26,8 @@ def run_stream(cfg: dict, split: str, threshold: float, build_dir=BUILD_DIR) -> 
         [str(build_dir / "stream"), str(ROOT / cfg["export"]["int8_pte"]), str(ROOT / "assets"),
          str(STREAM_DIR / f"{split}_stream.wav"), "--threads", str(s["threads"]),
          "--infer-every", str(s["infer_every_hops"]), "--smooth", str(s["smoothing_window"]),
-         "--threshold", str(threshold), "--refractory-s", str(s["refractory_s"])],
+         "--threshold", str(threshold), "--refractory-s", str(s["refractory_s"]),
+         "--min-consecutive", str(s.get("min_consecutive", 1))],
         check=True, capture_output=True, text=True,
     )  # fmt: skip
     return json.loads(out.stdout)
@@ -62,6 +64,11 @@ def nearest_event(time_s: float, events: list[dict]) -> dict:
     return {"label": event["label"], "seconds_after_onset": round(time_s - event["onset_s"], 3)}
 
 
+def choose_threshold(sweep: list[dict]) -> float:
+    """Most correct detections minus false alarms; ties go to the higher threshold."""
+    return max(sweep, key=lambda r: (r["correct"] - r["false_alarms"], r["threshold"]))["threshold"]
+
+
 def evaluate_split(cfg: dict, split: str) -> dict:
     s = cfg["stream"]
     truth = json.loads((STREAM_DIR / f"{split}_stream.json").read_text())
@@ -91,11 +98,12 @@ def evaluate_split(cfg: dict, split: str) -> dict:
 
 
 def main():
-    cfg = load_config()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--variant", help="config variant, e.g. streaming_model")
+    cfg = load_config(variant=parser.parse_args().variant)
     s = cfg["stream"]
     val, _ = evaluate_split(cfg, "validation")
-    best = max(val["sweep"], key=lambda r: (r["correct"] - r["false_alarms"], r["threshold"]))
-    threshold = best["threshold"]
+    threshold = choose_threshold(val["sweep"])
     test, test_runs = evaluate_split(cfg, "testing")
     run, m = test_runs[threshold]
     truth_events = json.loads((STREAM_DIR / "testing_stream.json").read_text())["events"]
@@ -108,6 +116,7 @@ def main():
             "infer_every_hops": s["infer_every_hops"],
             "smoothing_window": s["smoothing_window"],
             "refractory_s": s["refractory_s"],
+            "min_consecutive": s.get("min_consecutive", 1),
             "tolerance_s": s["tolerance_s"],
         },
         "threshold_selection": "max(correct - false_alarms) on the validation stream",

@@ -8,6 +8,7 @@ Writes:
     results/parity_python.json PyTorch vs .pte: max abs logit diff, top-1 agreement
 """
 
+import argparse
 import json
 from pathlib import Path
 
@@ -81,7 +82,9 @@ def top2_margin(logits: torch.Tensor) -> torch.Tensor:
 
 
 def main():
-    cfg = load_config()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--variant", help="config variant, e.g. streaming_model")
+    cfg = load_config(variant=parser.parse_args().variant)
     results_dir = ROOT / cfg["paths"]["results_dir"]
     fp32_pte = ROOT / cfg["export"]["fp32_pte"]
     int8_pte = ROOT / cfg["export"]["int8_pte"]

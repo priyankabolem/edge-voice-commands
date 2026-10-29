@@ -1,0 +1,35 @@
+== FP32 (kws_stream_fp32.pte) ==
+Delegated subgraphs: 1
+Delegated nodes: 39
+Non-delegated nodes: 1
+Non-delegated op types: getitem
+
+op_type                                              occurrences_in_delegated_graphs    occurrences_in_non_delegated_graphs
+-------------------------------------------------  ---------------------------------  -------------------------------------
+aten__native_batch_norm_legit_no_training_default                                  9                                      0
+aten_convolution_default                                                           9                                      0
+aten_linear_default                                                                1                                      0
+aten_mean_dim                                                                      1                                      0
+aten_relu_default                                                                  9                                      0
+aten_view_copy_default                                                             1                                      0
+getitem                                                                            9                                      1
+Total                                                                             39                                      1
+
+== INT8 (kws_stream_int8.pte) ==
+Delegated subgraphs: 1
+Delegated nodes: 57
+Non-delegated nodes: 1
+Non-delegated op types: getitem
+
+op_type                                                occurrences_in_delegated_graphs    occurrences_in_non_delegated_graphs
+---------------------------------------------------  ---------------------------------  -------------------------------------
+aten_convolution_default                                                             9                                      0
+aten_linear_default                                                                  1                                      0
+aten_mean_dim                                                                        1                                      0
+aten_relu_default                                                                    9                                      0
+aten_view_copy_default                                                               1                                      0
+getitem                                                                              0                                      1
+quantized_decomposed_dequantize_per_channel_default                                 10                                      0
+quantized_decomposed_dequantize_per_tensor_default                                  13                                      0
+quantized_decomposed_quantize_per_tensor_default                                    13                                      0
+Total                                                                               57                                      1

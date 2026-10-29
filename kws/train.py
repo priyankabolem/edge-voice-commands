@@ -15,7 +15,16 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset, Sampler
 
-from kws.data import ROOT, Augmenter, int16_to_float, label_names, load_config, load_noise_regions
+from kws.data import (
+    ROOT,
+    Augmenter,
+    int16_to_float,
+    keyword_shift,
+    label_names,
+    load_config,
+    load_noise_regions,
+    speech_bounds,
+)
 from kws.features import FeatureConfig, LogMelExtractor, normalize
 from kws.model import DSCNN, count_params
 
@@ -61,8 +70,30 @@ class AugmentedTrainSet(Dataset):
         self.waves = None
         self.augmenter = None
 
+        # Streaming-aware training (config variant): per-clip speech bounds for keyword
+        # clips, used for constrained time shifts and word-tail negatives.
+        self.aug = cfg["augmentation"]
+        self.bounds = None
+        if self.aug.get("tail_negative_prob", 0) > 0:
+            names = label_names(cfg)
+            self.is_keyword = [n in cfg["data"]["keywords"] for n in names]
+            self.unknown_id = names.index(cfg["data"]["unknown_label"])
+            self.bounds = self._keyword_bounds(cfg)
+
     def __len__(self) -> int:
         return len(self.labels)
+
+    def _keyword_bounds(self, cfg: dict) -> np.ndarray:
+        """(n, 2) speech onset/offset in samples for keyword clips; (0, 0) otherwise."""
+        sr = cfg["data"]["sample_rate"]
+        waves = np.load(self.features_dir / "training_waves.npy", mmap_mode="r")
+        bounds = np.zeros((len(self.labels), 2), dtype=np.int64)
+        for i, label in enumerate(self.labels):
+            if self.is_keyword[label]:
+                b = speech_bounds(waves[i], sr, self.aug["onset_rel_threshold"])
+                if b is not None:
+                    bounds[i] = round(b[0] * sr), round(b[1] * sr)
+        return bounds
 
     def __getitem__(self, key: tuple[int, int]):
         epoch, i = key
@@ -71,9 +102,19 @@ class AugmentedTrainSet(Dataset):
             noise = load_noise_regions(ROOT / self.cfg["paths"]["dataset_dir"], self.cfg)
             self.augmenter = Augmenter(noise["training"], self.cfg)
         rng = random.Random(f"{self.seed}-{epoch}-{i}")
-        audio = self.augmenter(int16_to_float(self.waves[i]), rng)
+        label, shift = int(self.labels[i]), None
+        if self.bounds is not None and self.is_keyword[label]:
+            onset, offset = self.bounds[i]
+            if offset > onset:
+                shift, is_tail = keyword_shift(
+                    int(onset), int(offset), rng, self.aug,
+                    self.cfg["data"]["sample_rate"], len(self.waves[i]),
+                )  # fmt: skip
+                if is_tail:
+                    label = self.unknown_id
+        audio = self.augmenter(int16_to_float(self.waves[i]), rng, shift)
         feats = normalize(self.extractor(audio), self.mean, self.std)
-        return torch.from_numpy(feats).unsqueeze(0), int(self.labels[i])
+        return torch.from_numpy(feats).unsqueeze(0), label
 
 
 def load_eval_split(cfg: dict, split: str, mean: np.ndarray, std: np.ndarray):
@@ -110,9 +151,10 @@ def seed_everything(seed: int):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--epochs", type=int, help="override train.epochs from the config")
+    parser.add_argument("--variant", help="config variant, e.g. streaming_model")
     args = parser.parse_args()
 
-    cfg = load_config()
+    cfg = load_config(variant=args.variant)
     tcfg = cfg["train"]
     if args.epochs is not None:
         tcfg["epochs"] = args.epochs

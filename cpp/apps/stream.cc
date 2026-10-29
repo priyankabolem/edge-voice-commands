@@ -8,7 +8,8 @@
 // against the 10 ms budget. Prints detections and timing as JSON.
 //
 // Usage: stream <model.pte> <assets_dir> <audio.wav> [--threads N] [--infer-every N]
-//        [--smooth N] [--threshold X] [--refractory-s X] [--dump-window HOP PATH]
+//        [--smooth N] [--threshold X] [--refractory-s X] [--min-consecutive N]
+//        [--dump-window HOP PATH]
 
 #include <algorithm>
 #include <chrono>
@@ -43,6 +44,7 @@ struct Options {
   int smooth = 5;
   float threshold = 0.7f;
   float refractory_s = 1.0f;
+  int min_consecutive = 1;
   long dump_hop = -1;
   std::string dump_path;
 };
@@ -65,6 +67,8 @@ Options ParseOptions(int argc, char** argv) {
       o.threshold = std::strtof(next(), nullptr);
     } else if (arg == "--refractory-s") {
       o.refractory_s = std::strtof(next(), nullptr);
+    } else if (arg == "--min-consecutive") {
+      o.min_consecutive = std::atoi(next());
     } else if (arg == "--dump-window") {
       o.dump_hop = std::atol(next());
       o.dump_path = next();
@@ -113,7 +117,8 @@ int main(int argc, char** argv) {
     const double hop_s = static_cast<double>(hop) / cfg.sample_rate;
     const int refractory_steps =
         static_cast<int>(opt.refractory_s / (hop_s * opt.infer_every) + 0.5);
-    kws::PosteriorDetector detector(is_keyword, opt.smooth, opt.threshold, refractory_steps);
+    kws::PosteriorDetector detector(is_keyword, opt.smooth, opt.threshold, refractory_steps,
+                                    opt.min_consecutive);
 
     const long num_hops = static_cast<long>(audio.size()) / hop;
     std::vector<double> hop_us(num_hops, 0.0);
@@ -189,9 +194,10 @@ int main(int argc, char** argv) {
                 audio_s, num_hops, inferences);
     std::printf(
         "  \"config\": {\"threads\": %d, \"infer_every_hops\": %d, \"smoothing_window\": %d, "
-        "\"threshold\": %.4f, \"refractory_s\": %.3f, \"refractory_steps\": %d},\n",
-        opt.threads, opt.infer_every, opt.smooth, opt.threshold, opt.refractory_s,
-        refractory_steps);
+        "\"threshold\": %.4f, \"refractory_s\": %.3f, \"refractory_steps\": %d, "
+        "\"min_consecutive\": %d},\n",
+        opt.threads, opt.infer_every, opt.smooth, opt.threshold, opt.refractory_s, refractory_steps,
+        opt.min_consecutive);
     std::printf(
         "  \"hop_latency_us\": {\"min\": %.3f, \"mean\": %.3f, \"median\": %.3f, \"p95\": %.3f, "
         "\"p99\": %.3f, \"max\": %.3f},\n",

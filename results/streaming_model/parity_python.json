@@ -1,0 +1,19 @@
+{
+  "num_test_clips": 4979,
+  "fp32_pytorch_vs_fp32_pte": {
+    "max_abs_logit_diff": 7.62939453125e-06,
+    "mean_abs_logit_diff": 1.0476547913640388e-06,
+    "top1_agreement": 1.0
+  },
+  "int8_pytorch_vs_int8_pte": {
+    "max_abs_logit_diff": 0.39681804180145264,
+    "mean_abs_logit_diff": 0.03421904891729355,
+    "top1_agreement": 0.9961839914321899,
+    "logit_quant_step": 0.05668829008936882,
+    "max_abs_logit_diff_in_steps": 7.000000197146022,
+    "mean_abs_logit_diff_in_steps": 0.6036352280752759,
+    "num_top1_disagreements": 19,
+    "median_top2_margin_all_clips": 3.0611677169799805,
+    "max_top2_margin_disagreeing_clips": 0.17006492614746094
+  }
+}

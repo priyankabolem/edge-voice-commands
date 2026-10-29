@@ -20,18 +20,17 @@ import soundfile as sf
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from kws.data import ROOT, SPLITS, load_config, load_noise_regions, pad_or_trim, read_wav_int16  # noqa: E402
+from kws.data import (  # noqa: E402
+    ROOT,
+    SPLITS,
+    load_config,
+    load_noise_regions,
+    pad_or_trim,
+    read_wav_int16,
+    speech_bounds,
+)
 
 STREAM_DIR = ROOT / "data" / "stream"
-
-
-def speech_bounds(clip: np.ndarray, sample_rate: int, rel_threshold: float) -> tuple[float, float]:
-    """First and last 10 ms frame whose RMS exceeds rel_threshold x the clip's peak RMS."""
-    hop = sample_rate // 100
-    frames = clip[: len(clip) // hop * hop].astype(np.float64).reshape(-1, hop)
-    rms = np.sqrt((frames**2).mean(axis=1))
-    active = np.flatnonzero(rms > rel_threshold * rms.max())
-    return active[0] * hop / sample_rate, (active[-1] + 1) * hop / sample_rate
 
 
 def build_stream(cfg: dict, split: str) -> tuple[np.ndarray, list[dict]]:

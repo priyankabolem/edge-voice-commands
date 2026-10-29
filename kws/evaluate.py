@@ -4,6 +4,7 @@ Writes results/fp32_pytorch.json (accuracy, per-class accuracy, confusion matrix
 results/model_summary.json (parameter count and multiply-accumulates per layer).
 """
 
+import argparse
 import json
 
 import numpy as np
@@ -43,7 +44,9 @@ def load_checkpoint(path) -> tuple[DSCNN, dict]:
 
 
 def main():
-    cfg = load_config()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--variant", help="config variant, e.g. streaming_model")
+    cfg = load_config(variant=parser.parse_args().variant)
     results_dir = ROOT / cfg["paths"]["results_dir"]
     model, ckpt = load_checkpoint(ROOT / cfg["train"]["checkpoint"])
     labels = ckpt["labels"]

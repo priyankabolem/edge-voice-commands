@@ -117,3 +117,13 @@ cpp-source:
 
 compare-runtimes:
 	$(PY) -m kws.compare_runtimes
+
+.PHONY: extra2
+
+# Streaming-aware model (config variant) and the before/after streaming comparison.
+extra2: cpp
+	$(PY) -m kws.train --variant streaming_model
+	$(PY) -m kws.evaluate --variant streaming_model
+	$(PY) -m kws.quantize --variant streaming_model
+	$(PY) -m kws.export --variant streaming_model
+	$(PY) -m kws.compare_streaming

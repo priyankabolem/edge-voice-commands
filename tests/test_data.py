@@ -123,3 +123,24 @@ def test_saved_features_have_expected_shape():
         assert set(np.unique(labels)) == set(range(len(label_names(CFG)))), (
             f"{split}: missing a class"
         )
+
+
+def test_keyword_shift_tail_negatives_and_keep_constraint():
+    from kws.data import keyword_shift
+
+    aug = {"time_shift_ms": 300, "keyword_keep_min": 0.8, "tail_negative_prob": 0.5,
+           "tail_visible": [0.15, 0.6]}  # fmt: skip
+    onset, offset, n = 6000, 10000, 16000
+    rng = random.Random(0)
+    tails = 0
+    for _ in range(500):
+        shift, is_tail = keyword_shift(onset, offset, rng, aug, 16000, n)
+        start, end = onset + shift, offset + shift
+        inside = min(end, n) - max(start, 0)
+        if is_tail:
+            tails += 1
+            assert start < 0, "a tail negative must cut off the start of the word"
+            assert 0.15 * 4000 - 1 <= inside <= 0.6 * 4000 + 1
+        else:
+            assert abs(shift) <= 4800 and inside >= 0.8 * 4000
+    assert 200 < tails < 300

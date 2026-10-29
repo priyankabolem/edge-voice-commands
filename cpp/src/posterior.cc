@@ -7,12 +7,13 @@
 namespace kws {
 
 PosteriorDetector::PosteriorDetector(std::vector<bool> is_keyword, int window, float threshold,
-                                     int refractory_steps)
+                                     int refractory_steps, int min_consecutive)
     : num_classes_(static_cast<int>(is_keyword.size())),
       is_keyword_(std::move(is_keyword)),
       window_(window),
       threshold_(threshold),
       refractory_steps_(refractory_steps),
+      min_consecutive_(min_consecutive),
       history_(static_cast<size_t>(window) * num_classes_, 0.0f),
       smoothed_(num_classes_, 0.0f),
       steps_since_detection_(refractory_steps) {}
@@ -39,8 +40,17 @@ PosteriorDetector::Detection PosteriorDetector::Update(const float* logits) {
     if (is_keyword_[c] && smoothed_[c] > best.score) best = {c, smoothed_[c]};
   }
   ++steps_since_detection_;
-  if (best.score > threshold_ && steps_since_detection_ > refractory_steps_) {
+  if (best.score > threshold_) {
+    run_length_ = (best.label == run_label_) ? run_length_ + 1 : 1;
+    run_label_ = best.label;
+  } else {
+    run_length_ = 0;
+    run_label_ = -1;
+  }
+  if (run_length_ >= min_consecutive_ && steps_since_detection_ > refractory_steps_) {
     steps_since_detection_ = 0;
+    run_length_ = 0;
+    run_label_ = -1;
     return best;
   }
   return {};

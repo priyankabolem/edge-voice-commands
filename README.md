@@ -161,6 +161,28 @@ Threshold sweep:
 
 Each false alarm and miss is listed in `results/streaming.json` together with the nearest ground-truth event.
 
+### Streaming-aware training and consecutive detections
+
+This section is an experiment. The baseline model and detector (one inference above the threshold) remain the defaults used everywhere else in this README, in `make all`, and by the C++ apps. The experimental model is only built with `make extra2` and writes to its own files (`models/kws_stream_*`, `results/streaming_model/`).
+
+To reduce the streaming errors above, I tried two changes, with their settings fixed before looking at any results:
+
+- **Streaming-aware model** (`--variant streaming_model` in `configs/config.yaml`). Training uses time shifts of up to 300 ms instead of 100 ms, as long as most of the keyword stays inside the window. In addition, 20% of keyword clips are shifted so that only the end of the word is left at the start of the window and relabelled `_unknown_` (word-tail negatives), which targets errors like the end of "stop" being read as "up".
+- **Consecutive detections**: the detector fires only after the same keyword stays above the threshold for 3 inferences in a row, instead of 1.
+
+All four combinations use the Stage 7 method: the threshold is chosen on the validation stream, and the same test stream is scored.
+
+<!-- results:streaming_comparison -->
+| Model | Consecutive | Clip accuracy (INT8 `.pte`) | Threshold (from validation) | Validation: detected / FA | Test: detected / FA | Test FA per hour | Test median delay |
+|---|---|---|---|---|---|---|---|
+| Baseline | 1 | 94.40% | 0.6 | 24 / 5 | 23 / 6 | 178.8 | 0.217 s |
+| Baseline | 3 | 94.40% | 0.6 | 24 / 5 | 22 / 5 | 149.0 | 0.262 s |
+| Streaming-aware | 1 | 92.05% | 0.7 | 22 / 4 | 21 / 3 | 89.4 | 0.247 s |
+| Streaming-aware | 3 | 92.05% | 0.6 | 22 / 5 | 22 / 3 | 89.4 | 0.265 s |
+<!-- /results:streaming_comparison -->
+
+The streaming-aware model has fewer false alarms on the test stream, but not on the validation stream, and it loses clip accuracy. With 30 keywords per stream, the differences between these rows are one to three events, so I do not consider any of them a reliable improvement. One effect is consistent: word-tail negatives lower the model's confidence on word endings, so the "stop" → "up" false alarm no longer fires with three consecutive detections. A larger evaluation set is needed before choosing between these configurations, so I kept the baseline as the default. `results/streaming_comparison.json` lists every false alarm and miss for each run.
+
 ### Prebuilt vs source-built ExecuTorch runtime
 
 The results above use the prebuilt C++ runtime that ships in the `executorch` pip wheel. To check whether that choice costs anything, I also built ExecuTorch v1.5.1 from source (`scripts/build_executorch.sh`: Release, XNNPACK, data loader, devtools and event tracer) and linked the same C++ code against it statically.
@@ -265,7 +287,7 @@ results/        measurement outputs (committed)
 - **Hardware.** Everything runs on a laptop CPU through XNNPACK, not on a DSP or NPU, and I did not measure power or energy.
 - **Streaming test data.** The streaming test is a synthetic stream of concatenated clips mixed with background noise, not a live microphone or natural continuous speech. Each stream is about two minutes with 30 keywords, so one keyword or one false alarm moves the rates noticeably.
 - **Dataset.** Speech Commands is mostly clean, isolated words, recorded close to the microphone.
-- **Streaming accuracy.** Streaming detection is clearly weaker than clip accuracy. The model was trained on whole, roughly centred words, so partial words at the edge of the sliding window can trigger false alarms, and very short words can stay below the threshold. Training with larger time shifts and partial-word negatives would be the next step.
+- **Streaming accuracy.** Streaming detection is clearly weaker than clip accuracy. The model was trained on whole, roughly centred words, so partial words at the edge of the sliding window can trigger false alarms, and very short words can stay below the threshold. Training with larger time shifts and word-tail negatives, and requiring consecutive detections, did not give a reliable improvement on the two 2-minute streams (see above); a larger streaming evaluation set is the next step.
 - **Ground-truth onsets.** Speech onsets in the streaming ground truth are estimated with an energy threshold. Clips that start with background noise get an onset that is too early, which can turn a correct detection into a miss plus a false alarm.
 - **Runtime builds.** The main C++ results use the prebuilt ExecuTorch runtime from the pip wheel. I compared it with a v1.5.1 source build on this one machine and model only (see above). The v1.5.1 source install does not ship the ETDump headers, so per-operator profiling (`profile_ops`) is built only against the prebuilt runtime.
 - **Thread control.** The XNNPACK thread count is set through ExecuTorch's experimental `_unsafe_reset_threadpool` API (the header is not part of the prebuilt SDK), and it must be called before a model is loaded.

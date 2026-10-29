@@ -83,6 +83,30 @@ stream:
   infer_every_hops: 2
   smoothing_window: 5
   refractory_s: 1.0
+  min_consecutive: 1
   # Evaluation (kws/evaluate_stream.py).
   tolerance_s: 0.75
   sweep_thresholds: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+  # Optional extra 2: detector settings compared by kws/compare_streaming.py.
+  compare_min_consecutive: [1, 3]
+
+# Optional extra 2: a streaming-aware model trained with larger time shifts and
+# word-tail negatives. Selected with --variant streaming_model; all outputs go to its
+# own model files and results directory, so the baseline stays unchanged.
+variants:
+  streaming_model:
+    paths:
+      results_dir: results/streaming_model
+    augmentation:
+      time_shift_ms: 300
+      keyword_keep_min: 0.8
+      tail_negative_prob: 0.2
+      tail_visible: [0.15, 0.6]
+      onset_rel_threshold: 0.1
+    train:
+      checkpoint: models/kws_stream_fp32.pt
+    quantization:
+      quantized_program: models/kws_stream_int8_pt2e.pt2
+    export:
+      fp32_pte: models/kws_stream_fp32.pte
+      int8_pte: models/kws_stream_int8.pte

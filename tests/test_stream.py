@@ -77,3 +77,24 @@ def test_match_counts_hits_misses_and_false_alarms():
     m = match(detections, keywords, tolerance_s=0.75)
     assert (m["correct"], m["missed"], m["false_alarms"]) == (1, 1, 3)
     assert m["delays_s"] == pytest.approx([0.3])
+
+
+@requires_cpp
+def test_min_consecutive_suppresses_short_runs(tmp_path):
+    # A run longer than the whole stream can never be reached, so nothing fires.
+    stream = ROOT / "data" / "stream" / "validation_stream.wav"
+    if not stream.exists():
+        pytest.skip("run make streams first")
+    assert run_stream(stream, "--threshold", 0.3, "--min-consecutive", 100000)["detections"] == []
+    assert run_stream(stream, "--threshold", 0.3)["detections"]
+
+
+def test_choose_threshold_prefers_net_correct_then_higher_threshold():
+    from kws.evaluate_stream import choose_threshold
+
+    sweep = [
+        {"threshold": 0.4, "correct": 10, "false_alarms": 4},
+        {"threshold": 0.5, "correct": 9, "false_alarms": 2},
+        {"threshold": 0.6, "correct": 8, "false_alarms": 1},
+    ]
+    assert choose_threshold(sweep) == 0.6
