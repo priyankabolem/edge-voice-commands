@@ -19,10 +19,10 @@ BUILD_DIR = ROOT / "cpp" / "build"
 STREAM_DIR = ROOT / "data" / "stream"
 
 
-def run_stream(cfg: dict, split: str, threshold: float) -> dict:
+def run_stream(cfg: dict, split: str, threshold: float, build_dir=BUILD_DIR) -> dict:
     s = cfg["stream"]
     out = subprocess.run(
-        [str(BUILD_DIR / "stream"), str(ROOT / cfg["export"]["int8_pte"]), str(ROOT / "assets"),
+        [str(build_dir / "stream"), str(ROOT / cfg["export"]["int8_pte"]), str(ROOT / "assets"),
          str(STREAM_DIR / f"{split}_stream.wav"), "--threads", str(s["threads"]),
          "--infer-every", str(s["infer_every_hops"]), "--smooth", str(s["smoothing_window"]),
          "--threshold", str(threshold), "--refractory-s", str(s["refractory_s"])],

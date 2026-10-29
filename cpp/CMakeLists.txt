@@ -11,7 +11,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 # ExecuTorch C++ runtime. By default this is the prebuilt SDK shipped in the
 # executorch pip wheel; pass -DEXECUTORCH_DIR=<prefix>/share/cmake to use another
-# installation (e.g. a build from source).
+# installation (e.g. third_party/executorch-install/lib/cmake/ExecuTorch from
+# scripts/build_executorch.sh).
 if(NOT EXECUTORCH_DIR)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   execute_process(
@@ -24,6 +25,26 @@ else()
   set(KWS_EXECUTORCH_SOURCE "custom (${EXECUTORCH_DIR})")
 endif()
 find_package(executorch CONFIG REQUIRED PATHS "${EXECUTORCH_DIR}" NO_DEFAULT_PATH)
+
+# The pip wheel exports shared libraries as executorch::*; a source install
+# (scripts/build_executorch.sh) exports static libraries under plain names that
+# already force-load the runtime and backend so their registrations are kept.
+if(TARGET executorch::runtime)
+  set(KWS_ET_RUNTIME executorch::runtime)
+  set(KWS_ET_XNNPACK executorch::backend_xnnpack)
+  set(KWS_ET_THREADPOOL executorch::threadpool)
+  set(KWS_ET_ETDUMP executorch::etdump)
+else()
+  set(KWS_ET_RUNTIME executorch extension_data_loader)
+  set(KWS_ET_XNNPACK xnnpack_backend)
+  set(KWS_ET_THREADPOOL extension_threadpool)
+  set(KWS_ET_ETDUMP etdump flatccrt)
+  # The source install does not record its version; the build script writes it.
+  if(EXISTS "${EXECUTORCH_DIR}/../../../VERSION")
+    file(STRINGS "${EXECUTORCH_DIR}/../../../VERSION" EXECUTORCH_BUILD_VERSION LIMIT_COUNT 1)
+  endif()
+  set(KWS_EXECUTORCH_SOURCE "source build (${EXECUTORCH_DIR})")
+endif()
 message(STATUS "ExecuTorch ${EXECUTORCH_BUILD_VERSION} from ${EXECUTORCH_DIR}")
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type_upper)
@@ -37,8 +58,7 @@ target_compile_options(kws_features PRIVATE -Wall -Wextra -Wpedantic)
 
 add_library(kws_model STATIC src/kws_model.cc src/threads.cc)
 target_include_directories(kws_model PUBLIC include)
-target_link_libraries(kws_model PUBLIC executorch::runtime executorch::backend_xnnpack
-                                       executorch::threadpool)
+target_link_libraries(kws_model PUBLIC ${KWS_ET_RUNTIME} ${KWS_ET_XNNPACK} ${KWS_ET_THREADPOOL})
 target_compile_options(kws_model PRIVATE -Wall -Wextra)
 
 foreach(app classify_wav batch_infer alloc_check bench stream)
@@ -60,5 +80,13 @@ target_link_libraries(dump_features PRIVATE kws_features)
 add_executable(build_info apps/build_info.cc)
 target_link_libraries(build_info PRIVATE kws_features)
 
-add_executable(profile_ops apps/profile_ops.cc)
-target_link_libraries(profile_ops PRIVATE kws_model executorch::etdump)
+# The ExecuTorch v1.5.1 source install ships libetdump but not its headers, so the
+# per-operator profiler is only built against runtimes that provide them.
+find_file(KWS_ETDUMP_HEADER executorch/devtools/etdump/etdump_flatcc.h
+          PATHS ${EXECUTORCH_INCLUDE_DIRS} NO_DEFAULT_PATH)
+if(KWS_ETDUMP_HEADER)
+  add_executable(profile_ops apps/profile_ops.cc)
+  target_link_libraries(profile_ops PRIVATE kws_model ${KWS_ET_ETDUMP})
+else()
+  message(STATUS "ETDump headers not installed with this ExecuTorch; skipping profile_ops")
+endif()

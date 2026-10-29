@@ -25,7 +25,7 @@ test:
 
 lint:
 	.venv/bin/ruff check . && .venv/bin/ruff format --check .
-	find cpp -path cpp/build -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format --dry-run --Werror
+	find cpp -path 'cpp/build*' -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format --dry-run --Werror
 
 .PHONY: stage2 train evaluate
 
@@ -71,7 +71,7 @@ parity-cpp:
 
 format:
 	.venv/bin/ruff format .
-	find cpp -path cpp/build -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format -i
+	find cpp -path 'cpp/build*' -prune -o \( -name '*.cc' -o -name '*.h' \) -print | xargs .venv/bin/clang-format -i
 
 .PHONY: stage6 benchmark profile-ops
 
@@ -101,3 +101,19 @@ all: stage0 stage1 stage2 stage3 stage4 stage5 stage6 stage7 readme
 
 readme:
 	$(PY) scripts/render_results.py
+
+.PHONY: extra1 executorch-source cpp-source compare-runtimes
+
+extra1: executorch-source cpp-source compare-runtimes
+
+executorch-source:
+	scripts/build_executorch.sh
+
+cpp-source:
+	PATH="$(CURDIR)/.venv/bin:$$PATH" cmake -S cpp -B cpp/build-source -G Ninja \
+		-DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=$(CURDIR)/.venv/bin/python \
+		-DEXECUTORCH_DIR=$(CURDIR)/third_party/executorch-install/lib/cmake/ExecuTorch
+	PATH="$(CURDIR)/.venv/bin:$$PATH" cmake --build cpp/build-source
+
+compare-runtimes:
+	$(PY) -m kws.compare_runtimes

@@ -161,6 +161,30 @@ Threshold sweep:
 
 Each false alarm and miss is listed in `results/streaming.json` together with the nearest ground-truth event.
 
+### Prebuilt vs source-built ExecuTorch runtime
+
+The results above use the prebuilt C++ runtime that ships in the `executorch` pip wheel. To check whether that choice costs anything, I also built ExecuTorch v1.5.1 from source (`scripts/build_executorch.sh`: Release, XNNPACK, data loader, devtools and event tracer) and linked the same C++ code against it statically.
+
+<!-- results:runtimes -->
+|  | Prebuilt (pip wheel) | Built from source |
+|---|---|---|
+| ExecuTorch | 1.5.1 | v1.5.1 (3b60683) |
+| Linking | shared libraries | static |
+| `stream` binary | 104.0 KB (106,504 B) | 1836.9 KB (1,880,952 B) |
+| Binary + ExecuTorch shared libraries | 2693.1 KB (2,757,768 B) | 1836.9 KB (1,880,952 B) |
+| INT8, 1 thread: inference median / p99 (us) | 301.0 / 319.4 | 301.2 / 317.3 |
+| INT8, 4 threads: inference median / p99 (us) | 137.0 / 168.0 | 136.2 / 176.0 |
+| FP32, 1 thread: inference median / p99 (us) | 582.6 / 607.7 | 582.7 / 607.2 |
+| FP32, 4 threads: inference median / p99 (us) | 217.8 / 316.5 | 217.4 / 329.5 |
+| C++ FP32 test accuracy (agreement with Python `.pte`) | 94.56% (100.00%) | 94.56% (100.00%) |
+| C++ INT8 test accuracy (agreement with Python `.pte`) | 94.40% (100.00%) | 94.40% (100.00%) |
+| Hot-path heap allocations | 0 | 0 |
+
+Identical streaming detections on the test stream: yes. Latency method: benchmark config; builds interleaved per repeat; median across repeats.
+<!-- /results:runtimes -->
+
+The two runtimes produce the same outputs and the same latency within run-to-run noise, so for this model the prebuilt runtime gives up no performance. The source build is still useful for what the wheel cannot do: one static binary with a smaller total size, control over build options (the source Release build compiles logging out), and the starting point for cross-compiling to another device.
+
 ## How to reproduce
 
 Requirements: macOS (Apple Silicon or Intel) or Linux, Python 3.11, and [uv](https://github.com/astral-sh/uv). CMake, Ninja and clang-format are installed into the virtual environment from `requirements.txt`.
@@ -171,6 +195,25 @@ uv pip install --python .venv/bin/python -r requirements.txt
 make all        # downloads the dataset (2.3 GB) and regenerates every file in results/
 make readme     # re-renders the README tables from results/
 make test lint
+```
+
+To build ExecuTorch from source and compare it with the prebuilt runtime:
+
+```bash
+make extra1     # scripts/build_executorch.sh, cpp/build-source, results/runtime_comparison.json
+make readme
+```
+
+`scripts/build_executorch.sh` clones tag v1.5.1 into `third_party/` with only the submodules this configuration needs, then configures and installs it:
+
+```bash
+cmake -S third_party/executorch -B third_party/executorch-build -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=third_party/executorch-install \
+  -DPYTHON_EXECUTABLE=.venv/bin/python -DEXECUTORCH_BUILD_XNNPACK=ON \
+  -DEXECUTORCH_BUILD_EXTENSION_DATA_LOADER=ON -DEXECUTORCH_BUILD_DEVTOOLS=ON \
+  -DEXECUTORCH_ENABLE_EVENT_TRACER=ON
+cmake --build third_party/executorch-build -j "$(( $(sysctl -n hw.ncpu) + 1 ))"
+cmake --install third_party/executorch-build
 ```
 
 | Target | What it does | Writes |
@@ -198,7 +241,7 @@ cpp/build/bench models/kws_int8.pte assets --threads 1
 kws/            Python package: data, features, model, train, evaluate, quantize, export,
                 export_assets, parity_cpp, benchmark, profile_ops, evaluate_stream
 scripts/        dataset download, feature precompute, stream generation, environment record,
-                README rendering
+                README rendering, ExecuTorch source build
 cpp/            CMake project: include/kws, src (wav_reader, fft, log_mel, ring_buffer,
                 posterior, kws_model, threads, assets), apps, tools/alloc_counter
 tests/          pytest suite; tests that need the dataset or the C++ build skip without them
@@ -224,7 +267,7 @@ results/        measurement outputs (committed)
 - **Dataset.** Speech Commands is mostly clean, isolated words, recorded close to the microphone.
 - **Streaming accuracy.** Streaming detection is clearly weaker than clip accuracy. The model was trained on whole, roughly centred words, so partial words at the edge of the sliding window can trigger false alarms, and very short words can stay below the threshold. Training with larger time shifts and partial-word negatives would be the next step.
 - **Ground-truth onsets.** Speech onsets in the streaming ground truth are estimated with an energy threshold. Clips that start with background noise get an onset that is too early, which can turn a correct detection into a miss plus a false alarm.
-- **Prebuilt runtime.** The C++ results use the prebuilt ExecuTorch runtime shipped in the `executorch` pip wheel, so the runtime's own compile flags were not under my control. `cpp/CMakeLists.txt` accepts `-DEXECUTORCH_DIR=...` to use a source build instead.
+- **Runtime builds.** The main C++ results use the prebuilt ExecuTorch runtime from the pip wheel. I compared it with a v1.5.1 source build on this one machine and model only (see above). The v1.5.1 source install does not ship the ETDump headers, so per-operator profiling (`profile_ops`) is built only against the prebuilt runtime.
 - **Thread control.** The XNNPACK thread count is set through ExecuTorch's experimental `_unsafe_reset_threadpool` API (the header is not part of the prebuilt SDK), and it must be called before a model is loaded.
 - **Measurement noise.** All measurements come from one machine. macOS does not allow pinning threads to cores, so tail latencies include OS scheduling effects.
 - **Reproducibility of training.** Training on the Apple GPU (MPS) is not bit-for-bit reproducible, so retraining can change the last digits of the accuracy numbers.

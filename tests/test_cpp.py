@@ -17,6 +17,11 @@ BUILD_DIR = ROOT / "cpp" / "build"
 ASSETS_DIR = ROOT / "assets"
 FEATURES_DIR = ROOT / CFG["paths"]["features_dir"]
 INT8_PTE = ROOT / CFG["export"]["int8_pte"]
+# The default build uses the pip-wheel ExecuTorch runtime; build-source (if present)
+# links ExecuTorch built from source. Runtime-dependent tests run against both.
+RUNTIME_BUILDS = [
+    d for d in (BUILD_DIR, ROOT / "cpp" / "build-source") if (d / "batch_infer").exists()
+]
 
 pytestmark = pytest.mark.skipif(
     not (BUILD_DIR / "batch_infer").exists() or not (ASSETS_DIR / "config.txt").exists(),
@@ -83,12 +88,13 @@ def test_classify_wav_prints_known_label(tone_wav):
 
 
 @requires_model
-def test_batch_infer_matches_python_pte(tmp_path):
+@pytest.mark.parametrize("build_dir", RUNTIME_BUILDS, ids=lambda d: d.name)
+def test_batch_infer_matches_python_pte(tmp_path, build_dir):
     waves = np.load(FEATURES_DIR / "testing_waves.npy", mmap_mode="r")[:100]
     clips = tmp_path / "clips.i16"
     np.ascontiguousarray(waves, dtype="<i2").tofile(clips)
     out = tmp_path / "logits.f32"
-    run(BUILD_DIR / "batch_infer", INT8_PTE, ASSETS_DIR, clips, out)
+    run(build_dir / "batch_infer", INT8_PTE, ASSETS_DIR, clips, out)
     cpp = np.fromfile(out, dtype="<f4").reshape(100, 12)
 
     stats = np.load(FEATURES_DIR / "norm_stats.npz")
@@ -102,7 +108,8 @@ def test_batch_infer_matches_python_pte(tmp_path):
 
 
 @requires_model
-def test_hot_paths_do_not_allocate():
-    result = run(BUILD_DIR / "alloc_check", INT8_PTE, ASSETS_DIR, 200)
+@pytest.mark.parametrize("build_dir", RUNTIME_BUILDS, ids=lambda d: d.name)
+def test_hot_paths_do_not_allocate(build_dir):
+    result = run(build_dir / "alloc_check", INT8_PTE, ASSETS_DIR, 200)
     counts = json.loads(result.stdout)["allocations"]
     assert counts == {"feature_frame": 0, "feature_clip": 0, "inference": 0}

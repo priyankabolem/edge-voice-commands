@@ -33,8 +33,8 @@ def power_state() -> dict:
     }
 
 
-def main():
-    cfg = load_config()
+def measure(cfg: dict, build_dir=BUILD_DIR) -> tuple[list[dict], dict]:
+    """Run bench for FP32/INT8 x thread counts; return raw runs and per-config medians."""
     bcfg = cfg["benchmark"]
     runs, summary = [], {}
     for model in ("fp32", "int8"):
@@ -43,7 +43,7 @@ def main():
             repeats = []
             for r in range(bcfg["repeats"]):
                 result = run_json(
-                    BUILD_DIR / "bench", pte, ASSETS_DIR,
+                    build_dir / "bench", pte, ASSETS_DIR,
                     "--threads", threads, "--warmup", bcfg["warmup"], "--iters", bcfg["iters"],
                 )  # fmt: skip
                 if result["threads_active"] != threads:
@@ -61,6 +61,13 @@ def main():
             }
             print(key, {st: summary[key][st]["median"] for st in STAGES})
 
+    return runs, summary
+
+
+def main():
+    cfg = load_config()
+    bcfg = cfg["benchmark"]
+    runs, summary = measure(cfg)
     hop_us = 1e6 * cfg["features"]["hop_length"] / cfg["data"]["sample_rate"]
     report = {
         "method": (

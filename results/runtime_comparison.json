@@ -1,0 +1,686 @@
+{
+  "builds": {
+    "pip_wheel": {
+      "build_info": {
+        "compiler": "AppleClang 21.0.0.21000334",
+        "build_type": "Release",
+        "cxx_flags": "-O3 -DNDEBUG",
+        "executorch_version": "1.5.1",
+        "executorch_runtime": "prebuilt (executorch pip wheel)"
+      },
+      "end_to_end_parity": {
+        "num_test_clips": 4979,
+        "fp32": {
+          "cpp_accuracy": 0.9455714225769043,
+          "python_pte_accuracy": 0.9455714225769043,
+          "top1_agreement_cpp_vs_python_pte": 1.0,
+          "max_abs_logit_diff": 2.110004425048828e-05,
+          "mean_abs_logit_diff": 7.947529070406745e-07,
+          "num_clips_with_logit_diff_above_1e-4": 0
+        },
+        "int8": {
+          "cpp_accuracy": 0.9439646601676941,
+          "python_pte_accuracy": 0.9439646601676941,
+          "top1_agreement_cpp_vs_python_pte": 1.0,
+          "max_abs_logit_diff": 0.15770816802978516,
+          "mean_abs_logit_diff": 0.00035458020283840597,
+          "num_clips_with_logit_diff_above_1e-4": 44
+        }
+      },
+      "hot_path_allocations": {
+        "feature_frame": 0,
+        "feature_clip": 0,
+        "inference": 0
+      },
+      "streaming": {
+        "hop_latency_us": {
+          "min": 0.0,
+          "mean": 152.897,
+          "median": 4.041,
+          "p95": 308.209,
+          "p99": 317.417,
+          "max": 390.625
+        },
+        "budget_overruns": 0,
+        "real_time_factor": 0.01529,
+        "warmup_inference_us": 1855.0,
+        "hot_loop_allocations": 0
+      },
+      "streaming_detections": [
+        {
+          "time_s": 6.25,
+          "label": "up",
+          "score": 0.7566
+        },
+        {
+          "time_s": 7.85,
+          "label": "go",
+          "score": 0.7371
+        },
+        {
+          "time_s": 12.85,
+          "label": "stop",
+          "score": 0.6017
+        },
+        {
+          "time_s": 14.63,
+          "label": "up",
+          "score": 0.6559
+        },
+        {
+          "time_s": 21.91,
+          "label": "stop",
+          "score": 0.6481
+        },
+        {
+          "time_s": 22.93,
+          "label": "up",
+          "score": 0.9424
+        },
+        {
+          "time_s": 31.31,
+          "label": "no",
+          "score": 0.6814
+        },
+        {
+          "time_s": 33.29,
+          "label": "left",
+          "score": 0.6193
+        },
+        {
+          "time_s": 35.55,
+          "label": "yes",
+          "score": 0.6335
+        },
+        {
+          "time_s": 40.19,
+          "label": "up",
+          "score": 0.668
+        },
+        {
+          "time_s": 44.51,
+          "label": "yes",
+          "score": 0.6557
+        },
+        {
+          "time_s": 47.25,
+          "label": "go",
+          "score": 0.7126
+        },
+        {
+          "time_s": 54.85,
+          "label": "no",
+          "score": 0.7045
+        },
+        {
+          "time_s": 56.63,
+          "label": "go",
+          "score": 0.6358
+        },
+        {
+          "time_s": 65.51,
+          "label": "off",
+          "score": 0.6166
+        },
+        {
+          "time_s": 72.09,
+          "label": "yes",
+          "score": 0.6957
+        },
+        {
+          "time_s": 79.11,
+          "label": "left",
+          "score": 0.6564
+        },
+        {
+          "time_s": 81.07,
+          "label": "off",
+          "score": 0.6234
+        },
+        {
+          "time_s": 85.39,
+          "label": "stop",
+          "score": 0.6963
+        },
+        {
+          "time_s": 87.79,
+          "label": "stop",
+          "score": 0.7041
+        },
+        {
+          "time_s": 89.97,
+          "label": "down",
+          "score": 0.6028
+        },
+        {
+          "time_s": 92.09,
+          "label": "go",
+          "score": 0.6279
+        },
+        {
+          "time_s": 94.11,
+          "label": "right",
+          "score": 0.6435
+        },
+        {
+          "time_s": 96.69,
+          "label": "right",
+          "score": 0.6324
+        },
+        {
+          "time_s": 99.17,
+          "label": "no",
+          "score": 0.6094
+        },
+        {
+          "time_s": 101.45,
+          "label": "off",
+          "score": 0.6204
+        },
+        {
+          "time_s": 114.13,
+          "label": "on",
+          "score": 0.6435
+        },
+        {
+          "time_s": 116.53,
+          "label": "on",
+          "score": 0.6201
+        },
+        {
+          "time_s": 118.79,
+          "label": "left",
+          "score": 0.6323
+        }
+      ],
+      "stream_binary_bytes": 106504,
+      "shared_library_bytes": {
+        "libexecutorch.dylib": 360336,
+        "libexecutorch_backend_xnnpack.dylib": 2144592,
+        "libexecutorch_threadpool.dylib": 146336
+      },
+      "latency_us": {
+        "fp32_threads1": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.453,
+            "median": 2.458,
+            "p95": 2.5,
+            "p99": 2.5,
+            "max": 2.958
+          },
+          "feature_clip": {
+            "min": 236.958,
+            "mean": 238.069,
+            "median": 237.417,
+            "p95": 242.083,
+            "p99": 249.833,
+            "max": 270.125
+          },
+          "inference": {
+            "min": 580.458,
+            "mean": 584.416,
+            "median": 582.625,
+            "p95": 594.291,
+            "p99": 607.666,
+            "max": 635.708
+          },
+          "clip_end_to_end": {
+            "min": 818.666,
+            "mean": 823.339,
+            "median": 821.041,
+            "p95": 835.292,
+            "p99": 855.166,
+            "max": 910.708
+          }
+        },
+        "fp32_threads4": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.452,
+            "median": 2.458,
+            "p95": 2.459,
+            "p99": 2.542,
+            "max": 2.625
+          },
+          "feature_clip": {
+            "min": 237.083,
+            "mean": 238.635,
+            "median": 237.583,
+            "p95": 244.083,
+            "p99": 255.333,
+            "max": 330.875
+          },
+          "inference": {
+            "min": 191.25,
+            "mean": 220.277,
+            "median": 217.834,
+            "p95": 242.0,
+            "p99": 316.5,
+            "max": 380.458
+          },
+          "clip_end_to_end": {
+            "min": 440.042,
+            "mean": 463.407,
+            "median": 460.667,
+            "p95": 482.083,
+            "p99": 563.334,
+            "max": 633.458
+          }
+        },
+        "int8_threads1": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.46,
+            "median": 2.458,
+            "p95": 2.5,
+            "p99": 2.542,
+            "max": 3.292
+          },
+          "feature_clip": {
+            "min": 236.875,
+            "mean": 238.511,
+            "median": 237.5,
+            "p95": 243.916,
+            "p99": 252.458,
+            "max": 304.166
+          },
+          "inference": {
+            "min": 298.792,
+            "mean": 301.881,
+            "median": 300.958,
+            "p95": 307.084,
+            "p99": 319.416,
+            "max": 348.792
+          },
+          "clip_end_to_end": {
+            "min": 536.792,
+            "mean": 543.047,
+            "median": 539.75,
+            "p95": 552.75,
+            "p99": 578.917,
+            "max": 705.375
+          }
+        },
+        "int8_threads4": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.448,
+            "median": 2.458,
+            "p95": 2.5,
+            "p99": 2.542,
+            "max": 2.584
+          },
+          "feature_clip": {
+            "min": 237.042,
+            "mean": 238.15,
+            "median": 237.5,
+            "p95": 242.208,
+            "p99": 253.375,
+            "max": 272.583
+          },
+          "inference": {
+            "min": 114.209,
+            "mean": 137.804,
+            "median": 136.958,
+            "p95": 154.667,
+            "p99": 168.042,
+            "max": 250.0
+          },
+          "clip_end_to_end": {
+            "min": 357.292,
+            "mean": 380.966,
+            "median": 379.417,
+            "p95": 399.0,
+            "p99": 446.417,
+            "max": 548.417
+          }
+        }
+      }
+    },
+    "source": {
+      "build_info": {
+        "compiler": "AppleClang 21.0.0.21000334",
+        "build_type": "Release",
+        "cxx_flags": "-O3 -DNDEBUG",
+        "executorch_version": "v1.5.1 (3b60683)",
+        "executorch_runtime": "source build (/Users/priyankabolem/edge-voice-commands/third_party/executorch-install/lib/cmake/ExecuTorch)"
+      },
+      "end_to_end_parity": {
+        "num_test_clips": 4979,
+        "fp32": {
+          "cpp_accuracy": 0.9455714225769043,
+          "python_pte_accuracy": 0.9455714225769043,
+          "top1_agreement_cpp_vs_python_pte": 1.0,
+          "max_abs_logit_diff": 2.110004425048828e-05,
+          "mean_abs_logit_diff": 7.947529070406745e-07,
+          "num_clips_with_logit_diff_above_1e-4": 0
+        },
+        "int8": {
+          "cpp_accuracy": 0.9439646601676941,
+          "python_pte_accuracy": 0.9439646601676941,
+          "top1_agreement_cpp_vs_python_pte": 1.0,
+          "max_abs_logit_diff": 0.15770816802978516,
+          "mean_abs_logit_diff": 0.00035458020283840597,
+          "num_clips_with_logit_diff_above_1e-4": 44
+        }
+      },
+      "hot_path_allocations": {
+        "feature_frame": 0,
+        "feature_clip": 0,
+        "inference": 0
+      },
+      "streaming": {
+        "hop_latency_us": {
+          "min": 0.042,
+          "mean": 154.024,
+          "median": 4.958,
+          "p95": 309.292,
+          "p99": 336.459,
+          "max": 618.5
+        },
+        "budget_overruns": 0,
+        "real_time_factor": 0.015402,
+        "warmup_inference_us": 1045.542,
+        "hot_loop_allocations": 0
+      },
+      "streaming_detections": [
+        {
+          "time_s": 6.25,
+          "label": "up",
+          "score": 0.7566
+        },
+        {
+          "time_s": 7.85,
+          "label": "go",
+          "score": 0.7371
+        },
+        {
+          "time_s": 12.85,
+          "label": "stop",
+          "score": 0.6017
+        },
+        {
+          "time_s": 14.63,
+          "label": "up",
+          "score": 0.6559
+        },
+        {
+          "time_s": 21.91,
+          "label": "stop",
+          "score": 0.6481
+        },
+        {
+          "time_s": 22.93,
+          "label": "up",
+          "score": 0.9424
+        },
+        {
+          "time_s": 31.31,
+          "label": "no",
+          "score": 0.6814
+        },
+        {
+          "time_s": 33.29,
+          "label": "left",
+          "score": 0.6193
+        },
+        {
+          "time_s": 35.55,
+          "label": "yes",
+          "score": 0.6335
+        },
+        {
+          "time_s": 40.19,
+          "label": "up",
+          "score": 0.668
+        },
+        {
+          "time_s": 44.51,
+          "label": "yes",
+          "score": 0.6557
+        },
+        {
+          "time_s": 47.25,
+          "label": "go",
+          "score": 0.7126
+        },
+        {
+          "time_s": 54.85,
+          "label": "no",
+          "score": 0.7045
+        },
+        {
+          "time_s": 56.63,
+          "label": "go",
+          "score": 0.6358
+        },
+        {
+          "time_s": 65.51,
+          "label": "off",
+          "score": 0.6166
+        },
+        {
+          "time_s": 72.09,
+          "label": "yes",
+          "score": 0.6957
+        },
+        {
+          "time_s": 79.11,
+          "label": "left",
+          "score": 0.6564
+        },
+        {
+          "time_s": 81.07,
+          "label": "off",
+          "score": 0.6234
+        },
+        {
+          "time_s": 85.39,
+          "label": "stop",
+          "score": 0.6963
+        },
+        {
+          "time_s": 87.79,
+          "label": "stop",
+          "score": 0.7041
+        },
+        {
+          "time_s": 89.97,
+          "label": "down",
+          "score": 0.6028
+        },
+        {
+          "time_s": 92.09,
+          "label": "go",
+          "score": 0.6279
+        },
+        {
+          "time_s": 94.11,
+          "label": "right",
+          "score": 0.6435
+        },
+        {
+          "time_s": 96.69,
+          "label": "right",
+          "score": 0.6324
+        },
+        {
+          "time_s": 99.17,
+          "label": "no",
+          "score": 0.6094
+        },
+        {
+          "time_s": 101.45,
+          "label": "off",
+          "score": 0.6204
+        },
+        {
+          "time_s": 114.13,
+          "label": "on",
+          "score": 0.6435
+        },
+        {
+          "time_s": 116.53,
+          "label": "on",
+          "score": 0.6201
+        },
+        {
+          "time_s": 118.79,
+          "label": "left",
+          "score": 0.6323
+        }
+      ],
+      "stream_binary_bytes": 1880952,
+      "latency_us": {
+        "fp32_threads1": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.467,
+            "median": 2.458,
+            "p95": 2.5,
+            "p99": 2.542,
+            "max": 8.25
+          },
+          "feature_clip": {
+            "min": 237.5,
+            "mean": 239.984,
+            "median": 238.334,
+            "p95": 248.209,
+            "p99": 257.625,
+            "max": 275.75
+          },
+          "inference": {
+            "min": 579.75,
+            "mean": 584.063,
+            "median": 582.708,
+            "p95": 592.959,
+            "p99": 607.25,
+            "max": 663.5
+          },
+          "clip_end_to_end": {
+            "min": 818.417,
+            "mean": 823.473,
+            "median": 821.25,
+            "p95": 836.084,
+            "p99": 853.75,
+            "max": 913.292
+          }
+        },
+        "fp32_threads4": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.456,
+            "median": 2.458,
+            "p95": 2.5,
+            "p99": 2.875,
+            "max": 3.125
+          },
+          "feature_clip": {
+            "min": 237.667,
+            "mean": 238.944,
+            "median": 238.208,
+            "p95": 243.333,
+            "p99": 254.542,
+            "max": 267.584
+          },
+          "inference": {
+            "min": 191.542,
+            "mean": 220.063,
+            "median": 217.375,
+            "p95": 238.292,
+            "p99": 329.458,
+            "max": 408.458
+          },
+          "clip_end_to_end": {
+            "min": 440.958,
+            "mean": 462.776,
+            "median": 461.291,
+            "p95": 479.125,
+            "p99": 521.459,
+            "max": 636.583
+          }
+        },
+        "int8_threads1": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.442,
+            "median": 2.458,
+            "p95": 2.459,
+            "p99": 2.542,
+            "max": 3.0
+          },
+          "feature_clip": {
+            "min": 237.667,
+            "mean": 239.184,
+            "median": 238.583,
+            "p95": 243.834,
+            "p99": 252.958,
+            "max": 267.792
+          },
+          "inference": {
+            "min": 299.458,
+            "mean": 302.145,
+            "median": 301.25,
+            "p95": 306.875,
+            "p99": 317.333,
+            "max": 335.25
+          },
+          "clip_end_to_end": {
+            "min": 539.042,
+            "mean": 542.285,
+            "median": 540.875,
+            "p95": 550.542,
+            "p99": 564.041,
+            "max": 608.458
+          }
+        },
+        "int8_threads4": {
+          "feature_frame": {
+            "min": 2.375,
+            "mean": 2.439,
+            "median": 2.417,
+            "p95": 2.459,
+            "p99": 2.542,
+            "max": 2.917
+          },
+          "feature_clip": {
+            "min": 237.666,
+            "mean": 239.224,
+            "median": 238.084,
+            "p95": 242.958,
+            "p99": 252.25,
+            "max": 264.708
+          },
+          "inference": {
+            "min": 112.084,
+            "mean": 136.998,
+            "median": 136.167,
+            "p95": 152.833,
+            "p99": 175.958,
+            "max": 257.958
+          },
+          "clip_end_to_end": {
+            "min": 358.042,
+            "mean": 380.337,
+            "median": 379.708,
+            "p95": 396.917,
+            "p99": 442.667,
+            "max": 506.375
+          }
+        }
+      }
+    }
+  },
+  "method": {
+    "latency": "benchmark config; builds interleaved per repeat; median across repeats",
+    "streaming": "test stream, INT8, threshold 0.6 (chosen in Stage 7)"
+  },
+  "identical_streaming_detections": true,
+  "inference_median_ratio_source_over_wheel": {
+    "fp32_threads1": 1.0,
+    "fp32_threads4": 0.998,
+    "int8_threads1": 1.001,
+    "int8_threads4": 0.994
+  }
+}

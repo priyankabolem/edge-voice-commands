@@ -250,6 +250,57 @@ def render_environment() -> str:
     return table(["", ""], rows)
 
 
+def render_runtimes() -> str:
+    r = load("runtime_comparison.json")
+    w, s = r["builds"]["pip_wheel"], r["builds"]["source"]
+
+    def deployed(build: dict) -> str:
+        total = build["stream_binary_bytes"] + sum(build.get("shared_library_bytes", {}).values())
+        return kb(total)
+
+    def lat(build: dict, key: str) -> str:
+        inf = build["latency_us"][key]["inference"]
+        return f"{us(inf['median'])} / {us(inf['p99'])}"
+
+    rows = [
+        [
+            "ExecuTorch",
+            w["build_info"]["executorch_version"],
+            s["build_info"]["executorch_version"],
+        ],
+        ["Linking", "shared libraries", "static"],
+        ["`stream` binary", kb(w["stream_binary_bytes"]), kb(s["stream_binary_bytes"])],
+        ["Binary + ExecuTorch shared libraries", deployed(w), deployed(s)],
+    ]
+    for key, label in [
+        ("int8_threads1", "INT8, 1 thread"),
+        ("int8_threads4", "INT8, 4 threads"),
+        ("fp32_threads1", "FP32, 1 thread"),
+        ("fp32_threads4", "FP32, 4 threads"),
+    ]:
+        rows.append([f"{label}: inference median / p99 (us)", lat(w, key), lat(s, key)])
+    for name in ("fp32", "int8"):
+        rows.append(
+            [
+                f"C++ {name.upper()} test accuracy (agreement with Python `.pte`)",
+                *(
+                    f"{pct(b['end_to_end_parity'][name]['cpp_accuracy'])} "
+                    f"({pct(b['end_to_end_parity'][name]['top1_agreement_cpp_vs_python_pte'])})"
+                    for b in (w, s)
+                ),
+            ]
+        )
+    rows.append(
+        ["Hot-path heap allocations", *(sum(b["hot_path_allocations"].values()) for b in (w, s))]
+    )
+    same = "yes" if r["identical_streaming_detections"] else "no"
+    return (
+        table(["", "Prebuilt (pip wheel)", "Built from source"], rows)
+        + f"\n\nIdentical streaming detections on the test stream: {same}. "
+        + f"Latency method: {r['method']['latency']}."
+    )
+
+
 SECTIONS = {
     "model": render_model,
     "accuracy": render_accuracy,
@@ -259,6 +310,7 @@ SECTIONS = {
     "latency": render_latency,
     "profile": render_profile,
     "streaming": render_streaming,
+    "runtimes": render_runtimes,
     "environment": render_environment,
 }
 

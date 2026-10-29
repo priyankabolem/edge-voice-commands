@@ -34,8 +34,10 @@ def cpp_features(wav_paths: list[Path], out_path: Path, n_frames: int, n_mels: i
     return np.fromfile(out_path, dtype="<f4").reshape(len(wav_paths), n_frames, n_mels)
 
 
-def cpp_logits(pte: Path, clips_path: Path, out_path: Path, num_classes: int) -> torch.Tensor:
-    run(BUILD_DIR / "batch_infer", pte, ASSETS_DIR, clips_path, out_path)
+def cpp_logits(
+    pte: Path, clips_path: Path, out_path: Path, num_classes: int, build_dir: Path = BUILD_DIR
+) -> torch.Tensor:
+    run(build_dir / "batch_infer", pte, ASSETS_DIR, clips_path, out_path)
     return torch.from_numpy(np.fromfile(out_path, dtype="<f4").reshape(-1, num_classes))
 
 
@@ -65,7 +67,7 @@ def feature_parity(cfg: dict, tmp: Path) -> dict:
     }
 
 
-def end_to_end(cfg: dict, tmp: Path) -> dict:
+def end_to_end(cfg: dict, tmp: Path, build_dir: Path = BUILD_DIR) -> dict:
     features_dir = ROOT / cfg["paths"]["features_dir"]
     clips_path = tmp / "testing.i16"
     np.ascontiguousarray(np.load(features_dir / "testing_waves.npy"), dtype="<i2").tofile(
@@ -78,7 +80,7 @@ def end_to_end(cfg: dict, tmp: Path) -> dict:
     for name in ("fp32", "int8"):
         pte = ROOT / cfg["export"][f"{name}_pte"]
         python = run_pte(pte, test_x)
-        cpp = cpp_logits(pte, clips_path, tmp / f"{name}_logits.f32", python.shape[1])
+        cpp = cpp_logits(pte, clips_path, tmp / f"{name}_logits.f32", python.shape[1], build_dir)
         report[name] = {
             "cpp_accuracy": float((cpp.argmax(1) == test_y).float().mean()),
             "python_pte_accuracy": float((python.argmax(1) == test_y).float().mean()),
