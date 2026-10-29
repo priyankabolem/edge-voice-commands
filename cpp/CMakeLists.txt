@@ -55,6 +55,13 @@ add_library(kws_features STATIC src/assets.cc src/fft.cc src/log_mel.cc src/post
                                 src/ring_buffer.cc src/wav_reader.cc)
 target_include_directories(kws_features PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/generated")
 target_compile_options(kws_features PRIVATE -Wall -Wextra -Wpedantic)
+# NEON FFT kernels on ARM (scalar fallback elsewhere or when OFF). Implicit FMA
+# contraction is disabled in fft.cc so both paths follow the explicit fma calls.
+option(KWS_ENABLE_NEON "Use NEON SIMD kernels when targeting ARM" ON)
+if(KWS_ENABLE_NEON)
+  target_compile_definitions(kws_features PUBLIC KWS_ENABLE_NEON)
+endif()
+set_source_files_properties(src/fft.cc PROPERTIES COMPILE_OPTIONS "-ffp-contract=off")
 
 add_library(kws_model STATIC src/kws_model.cc src/threads.cc)
 target_include_directories(kws_model PUBLIC include)
@@ -73,6 +80,9 @@ if(APPLE)
   target_link_libraries(stream PRIVATE alloc_counter)
   target_compile_definitions(stream PRIVATE KWS_HAVE_ALLOC_COUNTER)
 endif()
+
+add_executable(bench_fft apps/bench_fft.cc)
+target_link_libraries(bench_fft PRIVATE kws_features)
 
 add_executable(dump_features apps/dump_features.cc)
 target_link_libraries(dump_features PRIVATE kws_features)

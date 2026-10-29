@@ -46,3 +46,18 @@ def test_profile_ops_records_xnnpack_operators(tmp_path):
     names = [e.name for e in execute.events if e.is_delegated_op]
     assert sum("Convolution" in n for n in names) == 5
     assert any(e.name == "DELEGATE_CALL" for e in execute.events)
+
+
+@pytest.mark.skipif(not (BUILD_DIR / "bench_fft").exists(), reason="run make cpp first")
+def test_neon_fft_is_bit_identical_to_scalar():
+    out = subprocess.run(
+        [str(BUILD_DIR / "bench_fft"), str(ROOT / "assets"), "--warmup", "10", "--iters", "100",
+         "--check-frames", "2000"],
+        capture_output=True, text=True,
+    )  # fmt: skip
+    if "no NEON path" in out.stderr:
+        pytest.skip("build has no NEON path")
+    result = json.loads(out.stdout)
+    assert result["frames_with_power_mismatch"] == 0
+    assert result["frames_with_feature_mismatch"] == 0
+    assert out.returncode == 0

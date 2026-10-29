@@ -28,6 +28,7 @@
 #include "kws/posterior.h"
 #include "kws/ring_buffer.h"
 #include "kws/threads.h"
+#include "kws/timing.h"
 #include "kws/wav_reader.h"
 
 #ifdef KWS_HAVE_ALLOC_COUNTER
@@ -77,11 +78,6 @@ Options ParseOptions(int argc, char** argv) {
     }
   }
   return o;
-}
-
-double Percentile(const std::vector<double>& sorted, double p) {
-  const size_t rank = static_cast<size_t>(p / 100.0 * (sorted.size() - 1) + 0.5);
-  return sorted[std::min(rank, sorted.size() - 1)];
 }
 
 }  // namespace
@@ -201,8 +197,8 @@ int main(int argc, char** argv) {
     std::printf(
         "  \"hop_latency_us\": {\"min\": %.3f, \"mean\": %.3f, \"median\": %.3f, \"p95\": %.3f, "
         "\"p99\": %.3f, \"max\": %.3f},\n",
-        sorted.front(), processing_us / num_hops, Percentile(sorted, 50), Percentile(sorted, 95),
-        Percentile(sorted, 99), sorted.back());
+        sorted.front(), processing_us / num_hops, kws::Percentile(sorted, 50),
+        kws::Percentile(sorted, 95), kws::Percentile(sorted, 99), sorted.back());
     std::printf("  \"warmup_inference_us\": %.3f,\n", warmup_us);
     std::printf("  \"hop_budget_us\": %.1f,\n  \"budget_overruns\": %ld,\n", budget_us, overruns);
     std::printf("  \"real_time_factor\": %.6f,\n", processing_us / (audio_s * 1e6));

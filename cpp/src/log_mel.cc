@@ -5,9 +5,9 @@
 
 namespace kws {
 
-LogMelExtractor::LogMelExtractor(const Assets& assets)
+LogMelExtractor::LogMelExtractor(const Assets& assets, bool use_simd)
     : config_(assets.config),
-      fft_(assets.config.n_fft),
+      fft_(assets.config.n_fft, use_simd),
       window_(assets.window),
       inv_std_(assets.config.n_mels),
       mean_(assets.norm_mean),

@@ -1,0 +1,62 @@
+{
+  "kernel": "radix-2 FFT butterflies (stages with >= 4 butterflies per block) and power spectrum, NEON float32x4 with explicit fused multiply-adds",
+  "bit_exactness": {
+    "random_frames_checked": 10000,
+    "runs": 3,
+    "frames_with_power_mismatch": 0,
+    "frames_with_feature_mismatch": 0,
+    "int8_logits_neon_vs_scalar_fallback_build_identical": true,
+    "test_clips": 4979
+  },
+  "fft_share_of_scalar_frame": 0.895,
+  "speedup_median": {
+    "fft_power": 1.96,
+    "feature_frame": 1.78,
+    "feature_clip": 1.8
+  },
+  "latency_us": {
+    "fft_power_scalar": {
+      "min": 2.083,
+      "median": 2.125,
+      "p95": 2.167,
+      "p99": 2.292,
+      "max": 9.292
+    },
+    "fft_power_neon": {
+      "min": 1.0,
+      "median": 1.083,
+      "p95": 1.125,
+      "p99": 1.25,
+      "max": 12.542
+    },
+    "feature_frame_scalar": {
+      "min": 2.291,
+      "median": 2.375,
+      "p95": 2.417,
+      "p99": 2.75,
+      "max": 16.584
+    },
+    "feature_frame_neon": {
+      "min": 1.25,
+      "median": 1.333,
+      "p95": 1.334,
+      "p99": 1.542,
+      "max": 10.25
+    },
+    "feature_clip_scalar": {
+      "min": 231.167,
+      "median": 231.75,
+      "p95": 239.042,
+      "p99": 249.083,
+      "max": 296.458
+    },
+    "feature_clip_neon": {
+      "min": 128.208,
+      "median": 128.459,
+      "p95": 132.625,
+      "p99": 141.417,
+      "max": 186.167
+    }
+  },
+  "method": "bench_fft: 10000 timed iterations (clip: 1000) after warm-up, 3 process repeats; median across repeats"
+}

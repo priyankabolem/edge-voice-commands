@@ -19,8 +19,7 @@ models/*.pt2
 assets/
 
 # C++ build output
-cpp/build/
+cpp/build*/
 
 # ExecuTorch source checkout and build (scripts/build_executorch.sh)
 third_party/
-cpp/build-source/

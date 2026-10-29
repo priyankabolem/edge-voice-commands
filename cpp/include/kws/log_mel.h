@@ -15,7 +15,8 @@ namespace kws {
 // All buffers are allocated in the constructor; ComputeFrame/ComputeClip do not allocate.
 class LogMelExtractor {
  public:
-  explicit LogMelExtractor(const Assets& assets);
+  // use_simd selects the NEON FFT when the build has it (outputs are bit-identical).
+  explicit LogMelExtractor(const Assets& assets, bool use_simd = true);
 
   const FeatureConfig& config() const { return config_; }
 

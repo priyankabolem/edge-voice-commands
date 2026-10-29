@@ -127,3 +127,16 @@ extra2: cpp
 	$(PY) -m kws.quantize --variant streaming_model
 	$(PY) -m kws.export --variant streaming_model
 	$(PY) -m kws.compare_streaming
+
+.PHONY: extra3 cpp-scalar simd
+
+extra3: cpp cpp-scalar simd
+
+# Same C++ code with the NEON kernels compiled out (scalar fallback).
+cpp-scalar:
+	PATH="$(CURDIR)/.venv/bin:$$PATH" cmake -S cpp -B cpp/build-scalar -G Ninja \
+		-DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=$(CURDIR)/.venv/bin/python -DKWS_ENABLE_NEON=OFF
+	PATH="$(CURDIR)/.venv/bin:$$PATH" cmake --build cpp/build-scalar
+
+simd:
+	$(PY) -m kws.benchmark_simd

@@ -335,6 +335,37 @@ def render_streaming_comparison() -> str:
     )
 
 
+def render_simd() -> str:
+    r = load("simd.json")
+    lat, sp, bx = r["latency_us"], r["speedup_median"], r["bit_exactness"]
+    rows = []
+    for name, label in [
+        ("fft_power", "FFT + power spectrum (512 points)"),
+        ("feature_frame", "One feature frame"),
+        ("feature_clip", "One 1 s clip of features (98 frames)"),
+    ]:
+        s_, n_ = lat[f"{name}_scalar"], lat[f"{name}_neon"]
+        rows.append(
+            [
+                label,
+                f"{us(s_['median'])} / {us(s_['p99'])}",
+                f"{us(n_['median'])} / {us(n_['p99'])}",
+                f"{sp[name]:.2f}x",
+            ]
+        )
+    same = "yes" if bx["int8_logits_neon_vs_scalar_fallback_build_identical"] else "no"
+    return (
+        table(["", "Scalar median / p99 (us)", "NEON median / p99 (us)", "Speed-up (median)"], rows)
+        + f"\n\nThe FFT is {pct(r['fft_share_of_scalar_frame'])} of a scalar feature frame. "
+        f"Frames with any output difference between scalar and NEON: "
+        f"{bx['frames_with_power_mismatch'] + bx['frames_with_feature_mismatch']} of "
+        f"{bx['random_frames_checked']:,} random frames, checked in each of {bx['runs']} runs "
+        f"(power spectrum and features). INT8 logits on all "
+        f"{bx['test_clips']:,} test clips bitwise identical between the NEON build and a build "
+        f"with NEON compiled out: {same}. Method: {r['method']}."
+    )  # fmt: skip
+
+
 SECTIONS = {
     "model": render_model,
     "accuracy": render_accuracy,
@@ -346,6 +377,7 @@ SECTIONS = {
     "streaming": render_streaming,
     "runtimes": render_runtimes,
     "streaming_comparison": render_streaming_comparison,
+    "simd": render_simd,
     "environment": render_environment,
 }
 

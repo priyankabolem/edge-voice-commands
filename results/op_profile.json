@@ -15,8 +15,8 @@
   "fp32": {
     "threads": 1,
     "iterations": 200,
-    "delegate_call_median_us": 585.29,
-    "sum_of_op_medians_us": 573.0,
+    "delegate_call_median_us": 585.02,
+    "sum_of_op_medians_us": 574.0,
     "ops": [
       {
         "op": "Transpose (ND, X32) #1",
@@ -25,48 +25,48 @@
       },
       {
         "op": "Convolution (NHWC, F32) IGEMM #1",
-        "median_us": 102.0,
-        "share_of_ops_total": 0.178
+        "median_us": 103.0,
+        "share_of_ops_total": 0.1794
       },
       {
         "op": "Convolution (NHWC, F32) DWConv #1",
         "median_us": 31.0,
-        "share_of_ops_total": 0.0541
+        "share_of_ops_total": 0.054
       },
       {
         "op": "Fully Connected (NC, F32) GEMM #1",
         "median_us": 86.0,
-        "share_of_ops_total": 0.1501
+        "share_of_ops_total": 0.1498
       },
       {
         "op": "Convolution (NHWC, F32) DWConv #2",
         "median_us": 31.0,
-        "share_of_ops_total": 0.0541
+        "share_of_ops_total": 0.054
       },
       {
         "op": "Fully Connected (NC, F32) GEMM #2",
         "median_us": 86.0,
-        "share_of_ops_total": 0.1501
+        "share_of_ops_total": 0.1498
       },
       {
         "op": "Convolution (NHWC, F32) DWConv #3",
         "median_us": 31.0,
-        "share_of_ops_total": 0.0541
+        "share_of_ops_total": 0.054
       },
       {
         "op": "Fully Connected (NC, F32) GEMM #3",
         "median_us": 86.0,
-        "share_of_ops_total": 0.1501
+        "share_of_ops_total": 0.1498
       },
       {
         "op": "Convolution (NHWC, F32) DWConv #4",
         "median_us": 31.0,
-        "share_of_ops_total": 0.0541
+        "share_of_ops_total": 0.054
       },
       {
         "op": "Fully Connected (NC, F32) GEMM #4",
         "median_us": 86.0,
-        "share_of_ops_total": 0.1501
+        "share_of_ops_total": 0.1498
       },
       {
         "op": "Mean (ND) Reduce2 #1",
@@ -92,27 +92,27 @@
     "top3": [
       {
         "op": "Convolution (NHWC, F32) IGEMM #1",
-        "median_us": 102.0,
-        "share_of_ops_total": 0.178
+        "median_us": 103.0,
+        "share_of_ops_total": 0.1794
       },
       {
         "op": "Fully Connected (NC, F32) GEMM #1",
         "median_us": 86.0,
-        "share_of_ops_total": 0.1501
+        "share_of_ops_total": 0.1498
       },
       {
         "op": "Fully Connected (NC, F32) GEMM #2",
         "median_us": 86.0,
-        "share_of_ops_total": 0.1501
+        "share_of_ops_total": 0.1498
       }
     ],
-    "benchmark_inference_median_us": 582.541
+    "benchmark_inference_median_us": 582.333
   },
   "int8": {
     "threads": 1,
     "iterations": 200,
-    "delegate_call_median_us": 305.81,
-    "sum_of_op_medians_us": 297.0,
+    "delegate_call_median_us": 304.33,
+    "sum_of_op_medians_us": 296.0,
     "ops": [
       {
         "op": "Convert (NC) #1",
@@ -126,48 +126,48 @@
       },
       {
         "op": "Convolution (NHWC, QC8) IGEMM #1",
-        "median_us": 108.0,
-        "share_of_ops_total": 0.3636
+        "median_us": 107.0,
+        "share_of_ops_total": 0.3615
       },
       {
         "op": "Convolution (NHWC, QC8) DWConv #1",
         "median_us": 18.0,
-        "share_of_ops_total": 0.0606
+        "share_of_ops_total": 0.0608
       },
       {
         "op": "Fully Connected (NC, QS8, QC8W) GEMM #1",
         "median_us": 29.0,
-        "share_of_ops_total": 0.0976
+        "share_of_ops_total": 0.098
       },
       {
         "op": "Convolution (NHWC, QC8) DWConv #2",
         "median_us": 18.0,
-        "share_of_ops_total": 0.0606
+        "share_of_ops_total": 0.0608
       },
       {
         "op": "Fully Connected (NC, QS8, QC8W) GEMM #2",
         "median_us": 29.0,
-        "share_of_ops_total": 0.0976
+        "share_of_ops_total": 0.098
       },
       {
         "op": "Convolution (NHWC, QC8) DWConv #3",
         "median_us": 18.0,
-        "share_of_ops_total": 0.0606
+        "share_of_ops_total": 0.0608
       },
       {
         "op": "Fully Connected (NC, QS8, QC8W) GEMM #3",
         "median_us": 29.0,
-        "share_of_ops_total": 0.0976
+        "share_of_ops_total": 0.098
       },
       {
         "op": "Convolution (NHWC, QC8) DWConv #4",
         "median_us": 18.0,
-        "share_of_ops_total": 0.0606
+        "share_of_ops_total": 0.0608
       },
       {
         "op": "Fully Connected (NC, QS8, QC8W) GEMM #4",
         "median_us": 29.0,
-        "share_of_ops_total": 0.0976
+        "share_of_ops_total": 0.098
       },
       {
         "op": "Mean (ND) #1",
@@ -198,20 +198,20 @@
     "top3": [
       {
         "op": "Convolution (NHWC, QC8) IGEMM #1",
-        "median_us": 108.0,
-        "share_of_ops_total": 0.3636
+        "median_us": 107.0,
+        "share_of_ops_total": 0.3615
       },
       {
         "op": "Fully Connected (NC, QS8, QC8W) GEMM #1",
         "median_us": 29.0,
-        "share_of_ops_total": 0.0976
+        "share_of_ops_total": 0.098
       },
       {
         "op": "Fully Connected (NC, QS8, QC8W) GEMM #2",
         "median_us": 29.0,
-        "share_of_ops_total": 0.0976
+        "share_of_ops_total": 0.098
       }
     ],
-    "benchmark_inference_median_us": 301.541
+    "benchmark_inference_median_us": 301.375
   }
 }

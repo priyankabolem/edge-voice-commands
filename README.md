@@ -106,10 +106,10 @@ The INT8 differences are whole steps of the output quantization scale, and they 
 <!-- results:latency -->
 | Config | Inference median | p95 | p99 | max | Feature frame median | Feature clip median |
 |---|---|---|---|---|---|---|
-| FP32, 1 thread | 582.5 | 597.8 | 615.3 | 655.9 | 2.5 | 237.4 |
-| FP32, 4 threads | 217.1 | 238.5 | 295.0 | 379.5 | 2.5 | 237.3 |
-| INT8, 1 thread | 301.5 | 309.1 | 319.5 | 335.4 | 2.5 | 237.5 |
-| INT8, 4 threads | 137.0 | 152.6 | 176.2 | 262.2 | 2.5 | 237.7 |
+| FP32, 1 thread | 582.3 | 593.2 | 608.4 | 642.2 | 1.3 | 130.5 |
+| FP32, 4 threads | 216.5 | 239.8 | 296.6 | 383.2 | 1.3 | 129.9 |
+| INT8, 1 thread | 301.4 | 310.1 | 318.5 | 351.5 | 1.3 | 129.1 |
+| INT8, 4 threads | 136.2 | 153.1 | 173.7 | 249.0 | 1.3 | 129.0 |
 
 All values in microseconds. Method: 50 warm-up + 1000 timed iterations per stage, steady_clock, 3 process repeats; summary = median across repeats.
 <!-- /results:latency -->
@@ -119,12 +119,12 @@ All values in microseconds. Method: 50 warm-up + 1000 timed iterations per stage
 <!-- results:profile -->
 | Model | XNNPACK operator | Median (us) | Share of inference |
 |---|---|---|---|
-| FP32 | Convolution (NHWC, F32) IGEMM #1 | 102.0 | 17.80% |
-| FP32 | Fully Connected (NC, F32) GEMM #1 | 86.0 | 15.01% |
-| FP32 | Fully Connected (NC, F32) GEMM #2 | 86.0 | 15.01% |
-| INT8 | Convolution (NHWC, QC8) IGEMM #1 | 108.0 | 36.36% |
-| INT8 | Fully Connected (NC, QS8, QC8W) GEMM #1 | 29.0 | 9.76% |
-| INT8 | Fully Connected (NC, QS8, QC8W) GEMM #2 | 29.0 | 9.76% |
+| FP32 | Convolution (NHWC, F32) IGEMM #1 | 103.0 | 17.94% |
+| FP32 | Fully Connected (NC, F32) GEMM #1 | 86.0 | 14.98% |
+| FP32 | Fully Connected (NC, F32) GEMM #2 | 86.0 | 14.98% |
+| INT8 | Convolution (NHWC, QC8) IGEMM #1 | 107.0 | 36.15% |
+| INT8 | Fully Connected (NC, QS8, QC8W) GEMM #1 | 29.0 | 9.80% |
+| INT8 | Fully Connected (NC, QS8, QC8W) GEMM #2 | 29.0 | 9.80% |
 
 Single thread, 200 iterations, recorded with ETDump.
 <!-- /results:profile -->
@@ -141,9 +141,9 @@ The first convolution has a single input channel, so XNNPACK cannot vectorize it
 | Detection rate | 76.67% (23/30) |
 | False alarms | 6 (178.8 per hour) |
 | Median detection delay after speech onset | 0.217 s |
-| Per-hop processing p99 / max | 317.6 / 370.5 us |
+| Per-hop processing p99 / max | 316.9 / 413.3 us |
 | Hop budget / overruns | 10000 us / 0 |
-| Real-time factor | 0.0153 |
+| Real-time factor | 0.0152 |
 | Heap allocations in streaming loop | 0 |
 
 Threshold sweep:
@@ -192,12 +192,12 @@ The results above use the prebuilt C++ runtime that ships in the `executorch` pi
 |---|---|---|
 | ExecuTorch | 1.5.1 | v1.5.1 (3b60683) |
 | Linking | shared libraries | static |
-| `stream` binary | 104.0 KB (106,504 B) | 1836.9 KB (1,880,952 B) |
-| Binary + ExecuTorch shared libraries | 2693.1 KB (2,757,768 B) | 1836.9 KB (1,880,952 B) |
-| INT8, 1 thread: inference median / p99 (us) | 301.0 / 319.4 | 301.2 / 317.3 |
-| INT8, 4 threads: inference median / p99 (us) | 137.0 / 168.0 | 136.2 / 176.0 |
-| FP32, 1 thread: inference median / p99 (us) | 582.6 / 607.7 | 582.7 / 607.2 |
-| FP32, 4 threads: inference median / p99 (us) | 217.8 / 316.5 | 217.4 / 329.5 |
+| `stream` binary | 104.4 KB (106,904 B) | 1837.3 KB (1,881,368 B) |
+| Binary + ExecuTorch shared libraries | 2693.5 KB (2,758,168 B) | 1837.3 KB (1,881,368 B) |
+| INT8, 1 thread: inference median / p99 (us) | 301.5 / 319.3 | 301.5 / 319.8 |
+| INT8, 4 threads: inference median / p99 (us) | 136.3 / 176.8 | 136.1 / 174.7 |
+| FP32, 1 thread: inference median / p99 (us) | 582.0 / 614.5 | 582.2 / 610.2 |
+| FP32, 4 threads: inference median / p99 (us) | 217.8 / 282.5 | 217.2 / 295.5 |
 | C++ FP32 test accuracy (agreement with Python `.pte`) | 94.56% (100.00%) | 94.56% (100.00%) |
 | C++ INT8 test accuracy (agreement with Python `.pte`) | 94.40% (100.00%) | 94.40% (100.00%) |
 | Hot-path heap allocations | 0 | 0 |
@@ -206,6 +206,24 @@ Identical streaming detections on the test stream: yes. Latency method: benchmar
 <!-- /results:runtimes -->
 
 The two runtimes produce the same outputs and the same latency within run-to-run noise, so for this model the prebuilt runtime gives up no performance. The source build is still useful for what the wheel cannot do: one static binary with a smaller total size, control over build options (the source Release build compiles logging out), and the starting point for cross-compiling to another device.
+
+### NEON SIMD for the FFT
+
+Before choosing a loop to vectorize, I timed the steps of one feature frame. The FFT dominates, so I vectorized it instead of the mel filterbank. The butterfly stages with at least four butterflies per block and the power spectrum use NEON `float32x4` operations on ARM. The first two stages and non-ARM builds use the scalar code (`-DKWS_ENABLE_NEON=OFF` compiles NEON out entirely).
+
+Both paths write every fused multiply-add explicitly (`std::fma` and `vfmaq_f32`), and `fft.cc` is compiled with `-ffp-contract=off`, so the compiler cannot fuse operations differently in the two versions. The NEON and scalar outputs are therefore bit-identical, and so are all accuracy, parity and streaming results. Only timings change.
+
+<!-- results:simd -->
+|  | Scalar median / p99 (us) | NEON median / p99 (us) | Speed-up (median) |
+|---|---|---|---|
+| FFT + power spectrum (512 points) | 2.1 / 2.3 | 1.1 / 1.2 | 1.96x |
+| One feature frame | 2.4 / 2.8 | 1.3 / 1.5 | 1.78x |
+| One 1 s clip of features (98 frames) | 231.8 / 249.1 | 128.5 / 141.4 | 1.80x |
+
+The FFT is 89.50% of a scalar feature frame. Frames with any output difference between scalar and NEON: 0 of 10,000 random frames, checked in each of 3 runs (power spectrum and features). INT8 logits on all 4,979 test clips bitwise identical between the NEON build and a build with NEON compiled out: yes. Method: bench_fft: 10000 timed iterations (clip: 1000) after warm-up, 3 process repeats; median across repeats.
+<!-- /results:simd -->
+
+In streaming, each 10 ms hop computes one feature frame and every second hop also runs the model, so the per-hop cost is still dominated by inference. The speed-up matters most in clip mode, where all 98 feature frames are computed for every inference.
 
 ## How to reproduce
 
@@ -278,7 +296,7 @@ results/        measurement outputs (committed)
 - **Per-channel INT8 weights.** All calibration settings give similar test accuracy. Per-channel weights consistently track the FP32 model more closely (higher logit SQNR, higher top-1 agreement), and the gain is largest for depthwise layers once BatchNorm is folded in.
 - **ExecuTorch `Program`/`Method` API instead of `Module`.** `Module::forward()` returns a `std::vector`, which allocates on every call. I set up the method allocator, the memory-planned buffers and the input tensor once in the constructor, so each inference is a copy-in, `execute()`, and a pointer to the output.
 - **Measured, not assumed, zero allocation.** `cpp/tools/alloc_counter` interposes `malloc`/`calloc`/`realloc` for the whole process, including calls from inside ExecuTorch, XNNPACK and libc++. A self-test makes sure the counter is actually active before any result is trusted. The streaming loop is counted end to end; the model's one-time lazy setup is moved into a warm-up inference at startup.
-- **Small, owned DSP code.** The 512-point radix-2 FFT is about 50 lines of float32 code with preallocated scratch buffers. The mel filterbank is stored sparsely, so each filter only touches its non-zero bins.
+- **Small, owned DSP code.** The 512-point radix-2 FFT is a short float32 implementation with preallocated scratch buffers and a NEON path that is bit-identical to the scalar one. The mel filterbank is stored sparsely, so each filter only touches its non-zero bins.
 - **Incremental streaming features.** Each 10 ms hop completes exactly one new 25 ms frame. The stream computes only that frame and keeps the last 98 in a ring buffer. A test checks that the ring contents are bit-identical to clip-mode features for the same second of audio.
 - **Single-threaded INT8 as the default.** Four threads lower median latency but widen the tail, and one thread already fits the 10 ms hop budget with a large margin.
 
@@ -294,6 +312,7 @@ results/        measurement outputs (committed)
 - **Measurement noise.** All measurements come from one machine. macOS does not allow pinning threads to cores, so tail latencies include OS scheduling effects.
 - **Reproducibility of training.** Training on the Apple GPU (MPS) is not bit-for-bit reproducible, so retraining can change the last digits of the accuracy numbers.
 - **Allocation check platform.** The allocation counter uses dyld interposing and is only built on macOS.
+- **SIMD coverage.** Only the FFT has a NEON path, and I measured it only on Apple Silicon. On x86, the scalar fallback calls `std::fma`, which is fast only when the compiler targets FMA hardware (for example with `-mfma`).
 
 ## Environment
 

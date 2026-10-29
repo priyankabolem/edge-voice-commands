@@ -8,13 +8,10 @@
 //
 // Usage: bench <model.pte> <assets_dir> [--threads N] [--warmup N] [--iters N]
 
-#include <algorithm>
-#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <exception>
-#include <functional>
 #include <string>
 #include <vector>
 
@@ -22,45 +19,11 @@
 #include "kws/kws_model.h"
 #include "kws/log_mel.h"
 #include "kws/threads.h"
+#include "kws/timing.h"
 
-namespace {
-
-using Clock = std::chrono::steady_clock;
-
-struct Stats {
-  double min, mean, median, p95, p99, max;
-};
-
-// Nearest-rank percentile on sorted data.
-double Percentile(const std::vector<double>& sorted, double p) {
-  const size_t rank = static_cast<size_t>(p / 100.0 * (sorted.size() - 1) + 0.5);
-  return sorted[std::min(rank, sorted.size() - 1)];
-}
-
-Stats Measure(const std::function<void()>& fn, int warmup, int iters, std::vector<double>* us) {
-  for (int i = 0; i < warmup; ++i) fn();
-  for (int i = 0; i < iters; ++i) {
-    const auto start = Clock::now();
-    fn();
-    const auto end = Clock::now();
-    (*us)[i] = std::chrono::duration<double, std::micro>(end - start).count();
-  }
-  std::sort(us->begin(), us->begin() + iters);
-  double sum = 0.0;
-  for (int i = 0; i < iters; ++i) sum += (*us)[i];
-  return {
-      (*us)[0],        sum / iters, Percentile(*us, 50), Percentile(*us, 95), Percentile(*us, 99),
-      (*us)[iters - 1]};
-}
-
-void PrintStats(const char* name, const Stats& s, bool last) {
-  std::printf(
-      "    \"%s\": {\"min\": %.3f, \"mean\": %.3f, \"median\": %.3f, \"p95\": %.3f, "
-      "\"p99\": %.3f, \"max\": %.3f}%s\n",
-      name, s.min, s.mean, s.median, s.p95, s.p99, s.max, last ? "" : ",");
-}
-
-}  // namespace
+using kws::Measure;
+using kws::PrintStats;
+using kws::Stats;
 
 int main(int argc, char** argv) {
   if (argc < 3) {

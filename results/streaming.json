@@ -5,6 +5,7 @@
     "infer_every_hops": 2,
     "smoothing_window": 5,
     "refractory_s": 1.0,
+    "min_consecutive": 1,
     "tolerance_s": 0.75
   },
   "threshold_selection": "max(correct - false_alarms) on the validation stream",
@@ -123,17 +124,17 @@
       }
     ],
     "hop_latency_us": {
-      "min": 0.0,
-      "mean": 152.574,
-      "median": 3.042,
-      "p95": 306.0,
-      "p99": 317.583,
-      "max": 370.458
+      "min": 0.041,
+      "mean": 151.897,
+      "median": 1.959,
+      "p95": 307.583,
+      "p99": 316.875,
+      "max": 413.333
     },
     "hop_budget_us": 10000.0,
     "budget_overruns": 0,
-    "real_time_factor": 0.015257,
-    "warmup_inference_us": 406.25,
+    "real_time_factor": 0.01519,
+    "warmup_inference_us": 388.083,
     "hot_loop_allocations": 0
   },
   "sweep": {
